@@ -9,6 +9,7 @@ from htmltreediff.util import (
 )
 from htmltreediff.changes import dom_diff, distribute
 
+
 def diff(old_html, new_html, cutoff=0.0, plaintext=False, pretty=False):
     """Show the differences between the old and new html document, as html.
 
@@ -25,7 +26,10 @@ def diff(old_html, new_html, cutoff=0.0, plaintext=False, pretty=False):
 
     # If the two documents are not similar enough, don't show the changes.
     if not check_text_similarity(old_dom, new_dom, cutoff):
-        return '<h2>The differences from the previous version are too large to show concisely.</h2>'
+        return (
+            '<h2>The differences from the previous version are too large to '
+            'show concisely.</h2>'
+        )
 
     dom = dom_diff(old_dom, new_dom)
 
@@ -40,6 +44,7 @@ def diff(old_html, new_html, cutoff=0.0, plaintext=False, pretty=False):
         dom = body_elements[0]
 
     return minidom_tostring(dom, pretty=pretty)
+
 
 def fix_lists(dom):
     # <ins> and <del> tags are not allowed within <ul> or <ol> tags.
@@ -66,6 +71,7 @@ def fix_lists(dom):
                 c.setAttribute('class', 'del-li')
                 wrap_inner(c, 'del')
 
+
 def fix_tables(dom):
     # Show table row insertions
     tags = set()
@@ -91,4 +97,3 @@ def fix_tables(dom):
         parent = node.parentNode
         if parent.tagName in ['table', 'tbody', 'thead', 'tfoot', 'tr']:
             remove_node(node)
-

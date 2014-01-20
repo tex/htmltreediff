@@ -1,7 +1,5 @@
 import re
 from textwrap import dedent
-import html5lib
-from html5lib import treebuilders
 from xml.dom import minidom, Node
 
 from htmltreediff.text import WordMatcher, split_text
@@ -9,7 +7,11 @@ from htmltreediff.text import WordMatcher, split_text
 ## DOM utilities ##
 # parsing and cleaning #
 from xml.dom.pulldom import SAX2DOM
-import lxml.html, lxml.etree, lxml.sax
+import lxml.html
+import lxml.etree
+import lxml.sax
+
+
 def parse_lxml_dom(xml, strict_xml=True):
     if strict_xml:
         parse_func = lxml.etree.fromstring
@@ -24,6 +26,7 @@ def parse_lxml_dom(xml, strict_xml=True):
     lxml.sax.saxify(tree, handler)
     return handler.document
 
+
 def parse_text(text):
     dom = parse_lxml_dom('<body/>', strict_xml=True)
 
@@ -31,8 +34,8 @@ def parse_text(text):
     dom.documentElement.appendChild(text_node)
     return dom
 
+
 def parse_minidom(xml, clean=True, strict_xml=False):
-    html_parser = html5lib.HTMLParser(tree=treebuilders.getTreeBuilder('dom'))
     # Preprocessing
     xml = remove_comments(xml)
     if clean and not strict_xml:
@@ -49,11 +52,11 @@ def parse_minidom(xml, clean=True, strict_xml=False):
         # clean up irrelevant content
         for node in list(walk_dom(dom)):
             if node.nodeType == Node.COMMENT_NODE:
-                remove_node(node) #TODO: line not covered
+                remove_node(node)  # TODO: line not covered
             elif node.nodeName == 'style':
                 remove_node(node)
             elif node.nodeName == 'font':
-                unwrap(node) #TODO: line not covered
+                unwrap(node)  # TODO: line not covered
             elif node.nodeName == 'span':
                 unwrap(node)
     dom.normalize()
@@ -71,11 +74,13 @@ def parse_minidom(xml, clean=True, strict_xml=False):
 
     return dom
 
+
 def remove_comments(xml):
     """
     Remove comments, as they can break the xml parser.
 
-    See html5lib issue #122 ( http://code.google.com/p/html5lib/issues/detail?id=122 ).
+    See html5lib issue #122
+    ( http://code.google.com/p/html5lib/issues/detail?id=122 ).
 
     >>> remove_comments('<!-- -->')
     ''
@@ -86,6 +91,7 @@ def remove_comments(xml):
     """
     regex = re.compile(r'<!--.*?-->', re.DOTALL)
     return regex.sub('', xml)
+
 
 def remove_newlines(xml):
     r"""Remove newlines in the xml.
@@ -104,10 +110,12 @@ def remove_newlines(xml):
     # Normalize newlines.
     xml = xml.replace('\r\n', '\n')
     xml = xml.replace('\r', '\n')
-    # Remove newlines that don't separate text. The remaining ones do separate text.
+    # Remove newlines that don't separate text. The remaining ones do separate
+    # text.
     xml = re.sub(r'(?<=[>\s])\n(?=[<\s])', '', xml)
     xml = xml.replace('\n', ' ')
     return xml.strip()
+
 
 def minidom_tostring(dom, pretty=False):
     if pretty:
@@ -122,12 +130,16 @@ def minidom_tostring(dom, pretty=False):
     xml = dedent(xml.replace('\t', '  ')).strip()
     return xml
 
+
 def html_equal(a_html, b_html):
     if a_html == b_html:
         return True
     a_dom = parse_minidom(a_html)
     b_dom = parse_minidom(b_html)
-    return HashableTree(a_dom.documentElement) == HashableTree(b_dom.documentElement)
+    a_dom_tree = HashableTree(a_dom.documentElement)
+    b_dom_tree = HashableTree(b_dom.documentElement)
+    return a_dom_tree == b_dom_tree
+
 
 class HashableNode(object):
     def __init__(self, node):
@@ -152,6 +164,7 @@ class HashableNode(object):
                      self.node.nodeValue,
                      attributes))
 
+
 class HashableTree(object):
     def __init__(self, node):
         self.node = node
@@ -165,8 +178,11 @@ class HashableTree(object):
                 [HashableTree(c) for c in other.node.childNodes])
 
     def __hash__(self):
-        child_hashes = hash(tuple(HashableTree(c) for c in self.node.childNodes))
+        child_hashes = hash(tuple(
+            HashableTree(c) for c in self.node.childNodes
+        ))
         return hash((HashableNode(self.node), child_hashes))
+
 
 class FuzzyHashableTree(object):
     cutoff = 0.4
@@ -205,6 +221,7 @@ def attribute_dict(node):
         d[key] = node.value
     return d
 
+
 def normalize_entities(html):
     # turn &nbsp; and aliases into normal spaces
     html = html.replace(u'&nbsp;', u' ')
@@ -213,9 +230,11 @@ def normalize_entities(html):
     html = html.replace(u'\xa0', u' ')
     return html
 
+
 def remove_xml_declaration(xml):
     # remove the xml declaration, it messes up diffxml
     return re.sub(r'<\?xml.*\?>', '', xml).strip()
+
 
 def remove_dom_attributes(dom):
     for node in walk_dom(dom):
@@ -226,6 +245,8 @@ _non_text_node_tags = [
     'html', 'head', 'table', 'thead', 'tbody', 'tfoot', 'tr', 'colgroup',
     'col', 'ul', 'ol', 'dl', 'select', 'img', 'br', 'hr',
 ]
+
+
 def remove_insignificant_text_nodes(dom):
     """
     For html elements that should not have text nodes inside them, remove all
@@ -243,12 +264,15 @@ def remove_insignificant_text_nodes(dom):
     for node in nodes_to_remove:
         remove_node(node)
 
+
 # information #
 def is_text(node):
     return node.nodeType == Node.TEXT_NODE
 
+
 def is_element(node):
     return node.nodeType == Node.ELEMENT_NODE
+
 
 def get_child(parent, child_index):
     """
@@ -257,6 +281,7 @@ def get_child(parent, child_index):
     if child_index < 0 or child_index >= len(parent.childNodes):
         return None
     return parent.childNodes[child_index]
+
 
 def get_location(dom, location):
     """
@@ -268,8 +293,10 @@ def get_location(dom, location):
     for i in location:
         node = get_child(node, i)
         if not node:
-            raise ValueError('Node at location %s does not exist.' % location) #TODO: line not covered
+            # TODO: line not covered
+            raise ValueError('Node at location %s does not exist.' % location)
     return node
+
 
 def ancestors(node):
     ancestor = node
@@ -277,13 +304,15 @@ def ancestors(node):
         yield ancestor
         ancestor = ancestor.parentNode
 
+
 def walk_dom(dom, elements_only=False):
     # allow calling this on a document as well as as node
     if hasattr(dom, 'documentElement'):
         dom = dom.documentElement
+
     def walk(node):
         if not node:
-            return #TODO: line not covered
+            return  # TODO: line not covered
         if elements_only and not is_element(node):
             return
         yield node
@@ -291,6 +320,7 @@ def walk_dom(dom, elements_only=False):
             for descendant in walk(child):
                 yield descendant
     return walk(dom)
+
 
 def check_text_similarity(a_dom, b_dom, cutoff):
     """Check whether two dom trees have similar text or not."""
@@ -302,9 +332,11 @@ def check_text_similarity(a_dom, b_dom, cutoff):
         return True
     return False
 
+
 def tree_words(node):
     """Return all the significant text below the given node as a list of words.
-    >>> list(tree_words(parse_minidom('<h1>one</h1> two <div>three<em>four</em></div>')))
+    >>> list(tree_words(parse_minidom(
+    ...     '<h1>one</h1> two <div>three<em>four</em></div>')))
     ['one', 'two', 'three', 'four']
     """
     for word in split_text(tree_text(node)):
@@ -312,9 +344,11 @@ def tree_words(node):
         if word:
             yield word
 
+
 def tree_text(node):
     """
-    >>> tree_text(parse_minidom('<h1>one</h1>two<div>three<em>four</em></div>'))
+    >>> tree_text(parse_minidom(
+    ...     '<h1>one</h1>two<div>three<em>four</em></div>'))
     'one two three four'
     """
     text = []
@@ -323,6 +357,7 @@ def tree_text(node):
             text.append(descendant.nodeValue)
     return ' '.join(text)
 
+
 # manipulation #
 def copy_dom(dom):
     new_dom = minidom.Document()
@@ -330,21 +365,25 @@ def copy_dom(dom):
     new_dom.documentElement = doc
     return new_dom
 
+
 def remove_node(node):
     """
     Remove the node from the dom. If the node has no parent, raise an error.
     """
     node.parentNode.removeChild(node)
 
+
 def insert_or_append(parent, node, next_sibling):
     """
-    Insert the node before next_sibling. If next_sibling is None, append the node last instead.
+    Insert the node before next_sibling. If next_sibling is None, append the
+    node last instead.
     """
     # simple insert
     if next_sibling:
         parent.insertBefore(node, next_sibling)
     else:
         parent.appendChild(node)
+
 
 def wrap(node, tag):
     """Wrap the given tag around a node."""
@@ -355,6 +394,7 @@ def wrap(node, tag):
     wrap_node.appendChild(node)
     return wrap_node
 
+
 def wrap_inner(node, tag):
     """Wrap the given tag around the contents of a node."""
     children = list(node.childNodes)
@@ -362,6 +402,7 @@ def wrap_inner(node, tag):
     for c in children:
         wrap_node.appendChild(c)
     node.appendChild(wrap_node)
+
 
 def unwrap(node):
     """Remove a node, replacing it with its children."""

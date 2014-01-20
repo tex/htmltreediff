@@ -64,6 +64,7 @@ preprocessing_cases = [
 #    ),
 ]
 
+
 def test_preprocessing():
     for description, old_html, target, target_raw, in preprocessing_cases:
         def test():
@@ -72,6 +73,7 @@ def test_preprocessing():
             assert_equal(remove_xml_declaration(dom.toxml()), target_raw)
         test.description = description
         yield test
+
 
 def test_remove_insignificant_text_nodes():
     html = dedent('''
@@ -102,6 +104,7 @@ def test_remove_insignificant_text_nodes():
     remove_insignificant_text_nodes(dom)
     html = minidom_tostring(dom)
     assert_equal(html, target_html)
+
 
 def test_remove_insignificant_text_nodes_nbsp():
     html = dedent('''
@@ -139,6 +142,7 @@ def test_cutoff():
         'concisely.</h2>',
     )
 
+
 def test_html_diff_pretty():
     cases = [
         (
@@ -164,6 +168,7 @@ def test_html_diff_pretty():
         test.description = 'test_html_diff_pretty - %s' % test_name
         yield test
 
+
 def test_distribute():
     cases = [
         ('<ins><li>A</li><li><em>B</em></li></ins>',
@@ -180,6 +185,7 @@ def test_distribute():
                 minidom_tostring(distributed),
             )
         yield test, original, distributed
+
 
 def test_fix_lists():
     cases = [
@@ -325,12 +331,14 @@ def test_fix_lists():
     for test_name, changes, fixed_changes in cases:
         changes = collapse(changes)
         fixed_changes = collapse(fixed_changes)
+
         def test():
             changes_dom = parse_minidom(changes)
             fix_lists(changes_dom)
             assert_html_equal(minidom_tostring(changes_dom), fixed_changes)
         test.description = 'test_fix_lists - %s' % test_name
         yield test
+
 
 def test_fix_tables():
     cases = [
@@ -385,6 +393,7 @@ def test_fix_tables():
     for test_name, changes, fixed_changes in cases:
         changes = collapse(changes)
         fixed_changes = collapse(fixed_changes)
+
         def test():
             changes_dom = parse_minidom(changes, strict_xml=True)
             fix_tables(changes_dom)
