@@ -130,6 +130,17 @@ def test_remove_insignificant_text_nodes_nbsp():
 
 ## Post-processing
 
+def test_non_printing_characters():
+    changes = diff(
+        '',
+        '<div><p>foo</p>\x01<p>bar</p></div>',
+    )
+    assert_equal(
+        changes,
+        '<ins><div><p>foo</p><p>bar</p></div></ins>'
+    )
+
+
 def test_cutoff():
     changes = diff(
         '<h1>totally</h1>',
