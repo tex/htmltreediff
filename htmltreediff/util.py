@@ -94,7 +94,7 @@ def remove_comments(xml):
     return regex.sub('', xml)
 
 
-def remove_non_printing_characters(xml):
+def remove_non_printing_characters(xml, replace_char=u' '):
     r'''
     Replace non-printing characters from the XML with spaces, otherwise it
     interferes with the XML parsing
@@ -110,10 +110,9 @@ def remove_non_printing_characters(xml):
     u'<p>foo</p>!<p>bar</p>'
     '''
     non_printing_chars = range(32)
-    return unicode(xml).translate(dict(zip(
-        non_printing_chars,
-        len(non_printing_chars) * u' ',
-    )))
+    replace_chars = len(non_printing_chars) * replace_char
+    translation_map = dict(zip(non_printing_chars, replace_chars))
+    return unicode(xml).translate(translation_map)
 
 
 def remove_newlines(xml):
