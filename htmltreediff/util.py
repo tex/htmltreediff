@@ -109,7 +109,7 @@ def remove_non_printing_characters(xml):
     >>> remove_non_printing_characters('<p>foo</p>\x21<p>bar</p>')
     u'<p>foo</p>!<p>bar</p>'
     '''
-    non_printing_chars = range(31)
+    non_printing_chars = range(32)
     return unicode(xml).translate(dict(zip(
         non_printing_chars,
         len(non_printing_chars) * u' ',
