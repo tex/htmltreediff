@@ -96,8 +96,8 @@ def remove_comments(xml):
 
 def remove_non_printing_characters(xml):
     r'''
-    Remove non-printing characters from the XML, otherwise it interferes with
-    the XML parsing
+    Replace non-printing characters from the XML with spaces, otherwise it
+    interferes with the XML parsing
     >>> remove_non_printing_characters('<p>foo</p>\x00<p>bar</p>')
     u'<p>foo</p> <p>bar</p>'
     >>> remove_non_printing_characters('<p>foo</p>\x01<p>bar</p>')
