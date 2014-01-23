@@ -40,6 +40,7 @@ def parse_minidom(xml, clean=True, strict_xml=False):
     xml = remove_comments(xml)
     if clean and not strict_xml:
         xml = remove_newlines(xml)
+        xml = remove_non_printing_characters(xml)
         xml = normalize_entities(xml)
     xml = xml.strip()
 
@@ -91,6 +92,24 @@ def remove_comments(xml):
     """
     regex = re.compile(r'<!--.*?-->', re.DOTALL)
     return regex.sub('', xml)
+
+
+def remove_non_printing_characters(xml):
+    r'''
+    Remove non-printing characters from the XML, otherwise it interferes with
+    the XML parsing
+    >>> remove_non_printing_characters('<p>foo</p>\x00<p>bar</p>')
+    u'<p>foo</p> <p>bar</p>'
+    >>> remove_non_printing_characters('<p>foo</p>\x01<p>bar</p>')
+    u'<p>foo</p> <p>bar</p>'
+    >>> remove_non_printing_characters('<p>foo</p>\x19<p>bar</p>')
+    u'<p>foo</p> <p>bar</p>'
+    '''
+    non_printing_chars = range(31)
+    return unicode(xml).translate(dict(zip(
+        non_printing_chars,
+        len(non_printing_chars) * u' ',
+    )))
 
 
 def remove_newlines(xml):
