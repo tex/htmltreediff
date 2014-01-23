@@ -133,11 +133,27 @@ def test_remove_insignificant_text_nodes_nbsp():
 def test_non_printing_characters():
     changes = diff(
         '',
-        '<div><p>foo</p>\x01<p>bar</p></div>',
+        '<div><p>foo</p>\x00<p>bar</p></div>',
     )
     assert_equal(
         changes,
         '<ins><div><p>foo</p> <p>bar</p></div></ins>'
+    )
+    changes = diff(
+        '',
+        '<div><p>foo</p>\x1F<p>bar</p></div>',
+    )
+    assert_equal(
+        changes,
+        '<ins><div><p>foo</p> <p>bar</p></div></ins>'
+    )
+    changes = diff(
+        '',
+        '<div><p>foo</p>\x21<p>bar</p></div>',
+    )
+    assert_equal(
+        changes,
+        '<ins><div><p>foo</p>!<p>bar</p></div></ins>'
     )
 
 
