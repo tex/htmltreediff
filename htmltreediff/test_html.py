@@ -64,6 +64,7 @@ preprocessing_cases = [
 #    ),
 ]
 
+
 def test_preprocessing():
     for description, old_html, target, target_raw, in preprocessing_cases:
         def test():
@@ -72,6 +73,7 @@ def test_preprocessing():
             assert_equal(remove_xml_declaration(dom.toxml()), target_raw)
         test.description = description
         yield test
+
 
 def test_remove_insignificant_text_nodes():
     html = dedent('''
@@ -103,6 +105,7 @@ def test_remove_insignificant_text_nodes():
     html = minidom_tostring(dom)
     assert_equal(html, target_html)
 
+
 def test_remove_insignificant_text_nodes_nbsp():
     html = dedent('''
         <table>
@@ -127,6 +130,17 @@ def test_remove_insignificant_text_nodes_nbsp():
 
 ## Post-processing
 
+def test_non_printing_characters():
+    changes = diff(
+        '',
+        '<div><p\x01>\x1Ffoo\x21</p>\x00<p>bar</p></div>',
+    )
+    assert_equal(
+        changes,
+        '<ins><div><p> foo!</p> <p>bar</p></div></ins>'
+    )
+
+
 def test_cutoff():
     changes = diff(
         '<h1>totally</h1>',
@@ -138,6 +152,7 @@ def test_cutoff():
         '<h2>The differences from the previous version are too large to show '
         'concisely.</h2>',
     )
+
 
 def test_html_diff_pretty():
     cases = [
@@ -164,6 +179,7 @@ def test_html_diff_pretty():
         test.description = 'test_html_diff_pretty - %s' % test_name
         yield test
 
+
 def test_distribute():
     cases = [
         ('<ins><li>A</li><li><em>B</em></li></ins>',
@@ -180,6 +196,7 @@ def test_distribute():
                 minidom_tostring(distributed),
             )
         yield test, original, distributed
+
 
 def test_fix_lists():
     cases = [
@@ -325,12 +342,14 @@ def test_fix_lists():
     for test_name, changes, fixed_changes in cases:
         changes = collapse(changes)
         fixed_changes = collapse(fixed_changes)
+
         def test():
             changes_dom = parse_minidom(changes)
             fix_lists(changes_dom)
             assert_html_equal(minidom_tostring(changes_dom), fixed_changes)
         test.description = 'test_fix_lists - %s' % test_name
         yield test
+
 
 def test_fix_tables():
     cases = [
@@ -385,6 +404,7 @@ def test_fix_tables():
     for test_name, changes, fixed_changes in cases:
         changes = collapse(changes)
         fixed_changes = collapse(fixed_changes)
+
         def test():
             changes_dom = parse_minidom(changes, strict_xml=True)
             fix_tables(changes_dom)
