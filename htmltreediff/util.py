@@ -98,16 +98,9 @@ def remove_non_printing_characters(xml, replace_char=u' '):
     r'''
     Replace non-printing characters from the XML with spaces, otherwise it
     interferes with the XML parsing
-    >>> remove_non_printing_characters('<p>foo</p>\x00<p>bar</p>')
-    u'<p>foo</p> <p>bar</p>'
-    >>> remove_non_printing_characters('<p>foo</p>\x01<p>bar</p>')
-    u'<p>foo</p> <p>bar</p>'
-    >>> remove_non_printing_characters('<p>foo</p>\x1f<p>bar</p>')
-    u'<p>foo</p> <p>bar</p>'
-    >>> remove_non_printing_characters('<p>foo</p>\x20<p>bar</p>')
-    u'<p>foo</p> <p>bar</p>'
-    >>> remove_non_printing_characters('<p>foo</p>\x21<p>bar</p>')
-    u'<p>foo</p>!<p>bar</p>'
+    >>> remove_non_printing_characters(
+    ...     '<p\x00>foo</p>\x01\x1f<p>bar\x20\x21</\x02p>')
+    u'<p >foo</p>  <p>bar !</ p>'
     '''
     non_printing_chars = range(32)
     replace_chars = len(non_printing_chars) * replace_char
