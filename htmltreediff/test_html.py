@@ -137,7 +137,7 @@ def test_non_printing_characters():
     )
     assert_equal(
         changes,
-        '<ins><div><p>foo</p><p>bar</p></div></ins>'
+        '<ins><div><p>foo</p> <p>bar</p></div></ins>'
     )
 
 
