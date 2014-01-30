@@ -130,6 +130,18 @@ def test_remove_insignificant_text_nodes_nbsp():
 
 ## Post-processing
 
+
+def test_unwrap_div_shows_as_content_change():
+    changes = diff(
+        '<ul><li><div>Foo bar</div></li></ul>',
+        '<ul><li>Foo bar</li></ul>',
+    )
+    assert_equal(
+        changes,
+        '<ul><li>Foo bar</li></ul>'
+    )
+
+
 def test_non_printing_characters():
     changes = diff(
         '',
