@@ -130,6 +130,17 @@ def test_remove_insignificant_text_nodes_nbsp():
 
 ## Post-processing
 
+def test_other_node_type_inserted():
+    changes = diff(
+        u'<p>foo</p>',
+        u'<p>foo bar</p><?xml version=\'1.0\' encoding=\'utf-8\'?>',
+    )
+    assert_equal(
+        changes,
+        '<p>foo<ins> bar</ins></p>',
+    )
+
+
 def test_non_printing_characters():
     changes = diff(
         '',
