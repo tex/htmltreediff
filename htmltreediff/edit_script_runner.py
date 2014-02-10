@@ -7,6 +7,7 @@ from htmltreediff.util import (
     insert_or_append,
 )
 
+
 class EditScriptRunner(object):
     def __init__(self, dom, edit_script):
         self.dom = dom
@@ -23,8 +24,15 @@ class EditScriptRunner(object):
         node.orig_next_sibling = next_sibling
         self.del_nodes.append(node)
 
-    def action_insert(self, parent, child_index,
-                      node_type=None, node_name=None, node_value=None, attributes=None):
+    def action_insert(
+        self,
+        parent,
+        child_index,
+        node_type=None,
+        node_name=None,
+        node_value=None,
+        attributes=None,
+    ):
         if node_type == Node.ELEMENT_NODE:
             node = self.dom.createElement(node_name)
             if attributes:
@@ -35,7 +43,6 @@ class EditScriptRunner(object):
         self.action_insert_node(parent, child_index, node)
 
     def action_insert_node(self, parent, child_index, node):
-        previous_sibling = get_child(parent, child_index - 1)
         next_sibling = get_child(parent, child_index)
         insert_or_append(parent, node, next_sibling)
         # add node to ins_nodes
