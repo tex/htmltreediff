@@ -33,6 +33,7 @@ class EditScriptRunner(object):
         node_value=None,
         attributes=None,
     ):
+        node = None
         if node_type == Node.ELEMENT_NODE:
             node = self.dom.createElement(node_name)
             if attributes:
@@ -40,7 +41,8 @@ class EditScriptRunner(object):
                     node.setAttribute(key, value)
         elif node_type == Node.TEXT_NODE:
             node = self.dom.createTextNode(node_value)
-        self.action_insert_node(parent, child_index, node)
+        if node is not None:
+            self.action_insert_node(parent, child_index, node)
 
     def action_insert_node(self, parent, child_index, node):
         next_sibling = get_child(parent, child_index)
