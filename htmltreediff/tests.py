@@ -36,6 +36,13 @@ test_cases = [  # test case = (old html, new html, inline changes, edit script)
         [],
     ),
     (
+        'nothing',
+        '',
+        '',
+        '',
+        [],
+    ),
+    (
         'simple insert',
         '<h1>one</h1>',
         '<h1>one</h1><h2>two</h2>',
