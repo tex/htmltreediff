@@ -141,6 +141,11 @@ class WordMatcher(SequenceMatcher):
         '0.500'
         >>> '%.3f' % m.text_ratio() # text ratio is accurate
         '0.750'
+        >>> m = WordMatcher()
+        >>> '%.3f' % m.ratio() # normal ratio fails
+        '1.000'
+        >>> '%.3f' % m.text_ratio() # text ratio is accurate
+        '1.000'
         """
         return _calculate_ratio(
             self.match_length(),
