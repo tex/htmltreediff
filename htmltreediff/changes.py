@@ -96,17 +96,10 @@ def sort_nodes(dom, cmp_func):
             node.parentNode.insertBefore(node, prev_sib)
             prev_sib = node.previousSibling
 
+
 def sort_del_before_ins(dom):
-    def node_cmp(a, b):
-        try:
-            if a.tagName == 'del' and b.tagName == 'ins':
-                return -1 #TODO: line not covered
-            if a.tagName == 'ins' and b.tagName == 'del':
-                return 1
-        except AttributeError:
-            pass
-        return 0
-    sort_nodes(dom, cmp_func=node_cmp)
+    sort_nodes(dom, cmp_func=node_compare)
+
 
 def merge_adjacent(dom, tag_name):
     """

@@ -424,3 +424,14 @@ def unwrap(node):
     for child in list(node.childNodes):
         node.parentNode.insertBefore(child, node)
     remove_node(node)
+
+
+def node_compare(a, b):
+    try:
+        if a.tagName == 'del' and b.tagName == 'ins':
+            return -1  # TODO: line not covered
+        if a.tagName == 'ins' and b.tagName == 'del':
+            return 1
+    except AttributeError:
+        pass
+    return 0
