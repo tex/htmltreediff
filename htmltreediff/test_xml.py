@@ -102,6 +102,7 @@ test_cases = [
     )
 ]
 
+
 def test_xml_diff():
     for test_name, old_html, new_html, target in test_cases:
         old_dom = parse_minidom(old_html, strict_xml=True)

@@ -16,12 +16,17 @@ Basic Usage
 </h1>
 
 Text Diff Usage
->>> print diff(
+>>> html_diff = diff(
 ...     'The quick brown fox jumps over the lazy dog.',
 ...     'The very quick brown foxes jump over the dog.',
 ...     plaintext=True,
 ... )
-The<ins> very</ins> quick brown <del>fox jumps</del><ins>foxes jump</ins> over the<del> lazy</del> dog.
+>>> expected = ''.join([
+...     'The<ins> very</ins> quick brown <del>fox jumps</del>',
+...     '<ins>foxes jump</ins> over the<del> lazy</del> dog.',
+... ])
+>>> html_diff == expected
+True
 """
 
 from htmltreediff.html import diff

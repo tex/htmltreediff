@@ -4,7 +4,7 @@ from xml.dom import minidom, Node
 
 from htmltreediff.text import WordMatcher, split_text
 
-## DOM utilities ##
+# DOM utilities ##
 # parsing and cleaning #
 from xml.dom.pulldom import SAX2DOM
 import lxml.html
