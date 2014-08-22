@@ -52,9 +52,7 @@ def parse_minidom(xml, clean=True, strict_xml=False):
             remove_insignificant_text_nodes(dom)
         # clean up irrelevant content
         for node in list(walk_dom(dom)):
-            if node.nodeType == Node.COMMENT_NODE:
-                remove_node(node)  # TODO: line not covered
-            elif node.nodeName == 'style':
+            if node.nodeName == 'style':
                 remove_node(node)
             elif node.nodeName == 'font':
                 unwrap(node)  # TODO: line not covered
@@ -161,9 +159,6 @@ class HashableNode(object):
         self.node = node
 
     def __eq__(self, other):
-        if not hasattr(other, 'node'):
-            return False
-
         return (self.node.nodeType == other.node.nodeType and
                 self.node.nodeName == other.node.nodeName and
                 self.node.nodeValue == other.node.nodeValue and
@@ -211,10 +206,6 @@ class FuzzyHashableTree(object):
 
         if HashableNode(self.node) != HashableNode(other.node):
             return False
-
-        # Check for an exact tree match.
-        if HashableTree(self.node) == HashableTree(other.node):
-            return True
 
         # Check for a fuzzy match.
         if check_text_similarity(self.node, other.node, cutoff=self.cutoff):
@@ -321,6 +312,10 @@ def ancestors(node):
 
 
 def walk_dom(dom, elements_only=False):
+    """
+    >>> list(walk_dom(None))
+    []
+    """
     # allow calling this on a document as well as as node
     if hasattr(dom, 'documentElement'):
         dom = dom.documentElement

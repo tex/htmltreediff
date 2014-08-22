@@ -49,6 +49,18 @@ preprocessing_cases = [
         '<p>xxxyyy</p>',
         '<body><p>xxxyyy</p></body>',
     ),
+    (
+        'ignore font tags',
+        '<font type="text/css"></font>',
+        '',
+        '<body/>',
+    ),
+    (
+        'ignore coment tags',
+        '<!-- test -->',
+        '',
+        '<body/>',
+    ),
 ]
 
 
@@ -194,6 +206,16 @@ def test_distribute():
                 minidom_tostring(distributed),
             )
         yield test, original, distributed
+
+
+def test_get_location():
+    html = '<ins><li>A</li><li><em>B</em></li></ins>'
+    original = parse_minidom(html)
+    try:
+        get_location(original, [10])
+        raise AssertionError('ValueError not raised')
+    except ValueError:
+        pass
 
 
 def test_fix_lists():

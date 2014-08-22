@@ -7,9 +7,11 @@ from htmltreediff.changes import (
     _strip_changes_old,
 )
 from htmltreediff.util import (
-    parse_minidom,
     minidom_tostring,
+    node_compare,
+    parse_minidom,
     remove_dom_attributes,
+    walk_dom,
 )
 
 
@@ -106,3 +108,10 @@ def parse_cases(cases):
         else:
             raise ValueError('Invalid test spec: %r' % (args,))
         yield case
+
+
+def test_node_compare():
+    del_node = list(walk_dom(parse_minidom('<del/>')))[-1]
+    ins_node = list(walk_dom(parse_minidom('<ins/>')))[-1]
+    assert -1 == node_compare(del_node, ins_node)
+    assert 1 == node_compare(ins_node, del_node)
