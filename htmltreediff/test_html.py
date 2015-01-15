@@ -61,6 +61,19 @@ preprocessing_cases = [
         '',
         '<body/>',
     ),
+    # (
+    #     'illegal text nodes inside tables',
+    #     '''
+    #     <table>
+    #         illegal text
+    #         <tr>
+    #             <td>stuff</td>
+    #         </tr>
+    #     </table>
+    #     ''',
+    #     '<table> illegal text<tbody><tr><td>stuff</td></tr></tbody></table>',
+    #     '',
+    # ),
 ]
 
 

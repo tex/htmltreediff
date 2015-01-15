@@ -966,6 +966,18 @@ insane_test_cases = [
         </table>
         '''),
     ),
+    # BROKEN, see issue #2384
+    # # ul and ol tags are considered equal when diffing
+    # (
+    # '<ul><li>X</li></ul>',
+    # '<ol><li>X</li></ol>',
+    # '<ol><li>X</li></ol>',
+    # ),
+    # (
+    # '<ol><li>X</li></ol>',
+    # '<ul><li>X</li></ul>',
+    # '<ul><li>X</li></ul>',
+    # ),
 ]
 
 # Assemble test cases
