@@ -1,6 +1,6 @@
 # coding: utf8
-
 from nose.tools import assert_equal
+
 from htmltreediff.html import diff
 from htmltreediff.text import split_text
 
@@ -92,6 +92,13 @@ def test_text_diff():
             'one three\nfour five six',
             'one <del>two </del>three\nfour <ins>five </ins>six',
         ),
+        # long text diff is broken
+        # (
+        #     'long text diff',
+        #     open('htmltreediff/fixtures/long_diff/before.txt').read(),
+        #     open('htmltreediff/fixtures/long_diff/after.txt').read(),
+        #     open('htmltreediff/fixtures/long_diff/diff.html').read(),
+        # ),
     ]
     for description, old, new, changes in cases:
         def test():
