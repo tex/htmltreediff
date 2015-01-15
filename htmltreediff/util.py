@@ -36,11 +36,6 @@ def parse_text(text):
 
 
 def parse_minidom(xml, clean=True, strict_xml=False):
-    """
-    >>>
-    >>> parse_minidom('<ol><li>AAA</li>BBB><li>CCC</li></ol>')
-    Foo
-    """
     # Preprocessing
     xml = remove_comments(xml)
     if clean and not strict_xml:
@@ -328,7 +323,7 @@ def walk_dom(dom, elements_only=False):
     >>> list(walk_dom(None))
     []
     >>> result = list(walk_dom(parse_minidom(
-    ...     '<ol><li>AAA</li>BBB><li>CCC</li></ol>')))
+    ...     '<ol><li>AAA</li>BBB<li>CCC</li></ol>')))
     >>> result = [_print_helper(r) for r in result]
     >>> expected = [
     ...     ('body', None),
@@ -375,7 +370,7 @@ def tree_words(node):
     ...     '<h1>one</h1> two <div>three<em>four</em></div>')))
     ['one', 'two', 'three', 'four']
     >>> list(tree_words(parse_minidom(
-    ...     '<ol><li>AAA</li>BBB><li>CCC</li></ol>')))
+    ...     '<ol><li>AAA</li>BBB<li>CCC</li></ol>')))
     ['AAA', 'BBB', 'CCC']
     """
     for word in split_text(tree_text(node)):
@@ -390,7 +385,7 @@ def tree_text(node):
     ...     '<h1>one</h1>two<div>three<em>four</em></div>'))
     'one two three four'
     >>> tree_text(parse_minidom(
-    ...     '<ol><li>AAA</li>BBB><li>CCC</li></ol>'))
+    ...     '<ol><li>AAA</li>BBB<li>CCC</li></ol>'))
     'AAA BBB CCC'
     """
     text = []

@@ -113,6 +113,7 @@ def test_remove_insignificant_text_nodes_nbsp():
             <td> </td>
             <td>&#160;</td>
             <td>&nbsp;</td>
+            AAA
         </tr>
         </tbody>
         </table>
@@ -123,7 +124,7 @@ def test_remove_insignificant_text_nodes_nbsp():
     assert_equal(
         html,
         ('<table><tbody><tr><td> </td><td> </td><td> </td>'
-         '</tr></tbody></table>'),
+         ' AAA </tr></tbody></table>'),
     )
 
 
