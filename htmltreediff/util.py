@@ -259,15 +259,15 @@ def remove_insignificant_text_nodes(dom):
     whitespace. For elements that may have text, collapse multiple spaces to a
     single space.
     """
-    nodes_to_remove = []
+    insignificant_whitespace_only_text_nodes = []
     for node in walk_dom(dom):
         if is_text(node):
             text = node.nodeValue
-            if node.parentNode.tagName in _non_text_node_tags:
-                nodes_to_remove.append(node)
+            if node.parentNode.tagName in _non_text_node_tags and not text.strip():  # noqa
+                insignificant_whitespace_only_text_nodes.append(node)
             else:
                 node.nodeValue = re.sub(r'\s+', ' ', text)
-    for node in nodes_to_remove:
+    for node in insignificant_whitespace_only_text_nodes:
         remove_node(node)
 
 
