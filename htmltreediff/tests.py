@@ -821,6 +821,49 @@ test_cases = [  # test case = (old html, new html, inline changes, edit script)
             }),
         ]
     ),
+    (
+        'TD content change does not show TD removal',
+        '''
+        <table>
+            <tbody>
+                <tr>
+                    <td>AAA</td>
+                    <td>BBB</td>
+                </tr>
+            </tbody>
+        </table>
+        ''',
+        collapse('''
+        <table>
+            <tbody>
+                <tr>
+                    <td>ZZZ</td>
+                    <td>BBB</td>
+                </tr>
+            </tbody>
+        </table>
+        '''),
+        collapse('''
+        <table>
+            <tbody>
+                <tr>
+                    <td><del>AAA</del><ins>ZZZ</ins></td>
+                    <td>BBB</td>
+                </tr>
+            </tbody>
+        </table>
+        '''),
+        [  # TODO This may not be correct
+            ('delete', [0, 0, 0, 0], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'AAA',
+            }),
+            ('insert', [0, 0, 0, 0], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'ZZZ',
+            }),
+        ],
+    ),
 ]
 
 # test cases that should not be run in reverse
