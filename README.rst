@@ -2,6 +2,9 @@
 HTML Tree Diff
 ==============
 
+.. image:: https://travis-ci.org/PolicyStat/htmltreediff.svg
+    :target: https://travis-ci.org/PolicyStat/htmltreediff
+
 Structure aware diff of XML and HTML documents.
 
 The intended use is to concisely show the edits that have been made in a
