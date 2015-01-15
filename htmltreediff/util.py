@@ -36,6 +36,11 @@ def parse_text(text):
 
 
 def parse_minidom(xml, clean=True, strict_xml=False):
+    """
+    >>>
+    >>> parse_minidom('<ol><li>AAA</li>BBB><li>CCC</li></ol>')
+    Foo
+    """
     # Preprocessing
     xml = remove_comments(xml)
     if clean and not strict_xml:
@@ -311,10 +316,31 @@ def ancestors(node):
         ancestor = ancestor.parentNode
 
 
+def _print_helper(node):
+    tag_name = 'Text'
+    if hasattr(node, 'tagName'):
+        tag_name = node.tagName
+    return tag_name, node.nodeValue
+
+
 def walk_dom(dom, elements_only=False):
     """
     >>> list(walk_dom(None))
     []
+    >>> result = list(walk_dom(parse_minidom(
+    ...     '<ol><li>AAA</li>BBB><li>CCC</li></ol>')))
+    >>> result = [_print_helper(r) for r in result]
+    >>> expected = [
+    ...     ('body', None),
+    ...     ('ol', None),
+    ...     ('li', None),
+    ...     ('Text', 'AAA'),
+    ...     ('Text', 'BBB'),
+    ...     ('li', None),
+    ...     ('Text', 'CCC'),
+    ... ]
+    >>> result == expected
+    True
     """
     # allow calling this on a document as well as as node
     if hasattr(dom, 'documentElement'):
@@ -348,6 +374,9 @@ def tree_words(node):
     >>> list(tree_words(parse_minidom(
     ...     '<h1>one</h1> two <div>three<em>four</em></div>')))
     ['one', 'two', 'three', 'four']
+    >>> list(tree_words(parse_minidom(
+    ...     '<ol><li>AAA</li>BBB><li>CCC</li></ol>')))
+    ['AAA', 'BBB', 'CCC']
     """
     for word in split_text(tree_text(node)):
         word = word.strip()
@@ -360,6 +389,9 @@ def tree_text(node):
     >>> tree_text(parse_minidom(
     ...     '<h1>one</h1>two<div>three<em>four</em></div>'))
     'one two three four'
+    >>> tree_text(parse_minidom(
+    ...     '<ol><li>AAA</li>BBB><li>CCC</li></ol>'))
+    'AAA BBB CCC'
     """
     text = []
     for descendant in walk_dom(node):
