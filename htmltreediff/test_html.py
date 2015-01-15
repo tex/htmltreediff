@@ -56,24 +56,26 @@ preprocessing_cases = [
         '<body/>',
     ),
     (
-        'ignore coment tags',
+        'ignore comment tags',
         '<!-- test -->',
         '',
         '<body/>',
     ),
-    # (
-    #     'illegal text nodes inside tables',
-    #     '''
-    #     <table>
-    #         illegal text
-    #         <tr>
-    #             <td>stuff</td>
-    #         </tr>
-    #     </table>
-    #     ''',
-    #     '<table> illegal text<tbody><tr><td>stuff</td></tr></tbody></table>',
-    #     '',
-    # ),
+    (
+        'illegal text nodes inside tables are not removed',
+        '''
+        <table>
+            illegal text
+            <tbody>
+                <tr>
+                    <td>stuff</td>
+                </tr>
+            </tbody>
+        </table>
+        ''',
+        '<table> illegal text <tbody><tr><td>stuff</td></tr></tbody></table>',
+        '<body><table> illegal text <tbody><tr><td>stuff</td></tr></tbody></table></body>',  # noqa
+    ),
 ]
 
 
