@@ -56,24 +56,26 @@ preprocessing_cases = [
         '<body/>',
     ),
     (
-        'ignore coment tags',
+        'ignore comment tags',
         '<!-- test -->',
         '',
         '<body/>',
     ),
-    # (
-    #     'illegal text nodes inside tables',
-    #     '''
-    #     <table>
-    #         illegal text
-    #         <tr>
-    #             <td>stuff</td>
-    #         </tr>
-    #     </table>
-    #     ''',
-    #     '<table> illegal text<tbody><tr><td>stuff</td></tr></tbody></table>',
-    #     '',
-    # ),
+    (
+        'illegal text nodes inside tables are not removed',
+        '''
+        <table>
+            illegal text
+            <tbody>
+                <tr>
+                    <td>stuff</td>
+                </tr>
+            </tbody>
+        </table>
+        ''',
+        '<table> illegal text <tbody><tr><td>stuff</td></tr></tbody></table>',
+        '<body><table> illegal text <tbody><tr><td>stuff</td></tr></tbody></table></body>',  # noqa
+    ),
 ]
 
 
@@ -126,6 +128,7 @@ def test_remove_insignificant_text_nodes_nbsp():
             <td> </td>
             <td>&#160;</td>
             <td>&nbsp;</td>
+            AAA
         </tr>
         </tbody>
         </table>
@@ -136,7 +139,7 @@ def test_remove_insignificant_text_nodes_nbsp():
     assert_equal(
         html,
         ('<table><tbody><tr><td> </td><td> </td><td> </td>'
-         '</tr></tbody></table>'),
+         ' AAA </tr></tbody></table>'),
     )
 
 
