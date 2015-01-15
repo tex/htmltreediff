@@ -55,7 +55,7 @@ def parse_minidom(xml, clean=True, strict_xml=False):
             if node.nodeName == 'style':
                 remove_node(node)
             elif node.nodeName == 'font':
-                unwrap(node)  # TODO: line not covered
+                unwrap(node)
             elif node.nodeName == 'span':
                 unwrap(node)
     dom.normalize()
@@ -299,7 +299,6 @@ def get_location(dom, location):
     for i in location:
         node = get_child(node, i)
         if not node:
-            # TODO: line not covered
             raise ValueError('Node at location %s does not exist.' % location)
     return node
 
@@ -343,7 +342,7 @@ def walk_dom(dom, elements_only=False):
 
     def walk(node):
         if not node:
-            return  # TODO: line not covered
+            return
         if elements_only and not is_element(node):
             return
         yield node
@@ -451,7 +450,7 @@ def unwrap(node):
 def node_compare(a, b):
     try:
         if a.tagName == 'del' and b.tagName == 'ins':
-            return -1  # TODO: line not covered
+            return -1
         if a.tagName == 'ins' and b.tagName == 'del':
             return 1
     except AttributeError:
