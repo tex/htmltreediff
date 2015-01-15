@@ -4,7 +4,7 @@ from xml.dom import minidom, Node
 
 from htmltreediff.text import WordMatcher, split_text
 
-## DOM utilities ##
+# DOM utilities ##
 # parsing and cleaning #
 from xml.dom.pulldom import SAX2DOM
 import lxml.html
@@ -52,9 +52,7 @@ def parse_minidom(xml, clean=True, strict_xml=False):
             remove_insignificant_text_nodes(dom)
         # clean up irrelevant content
         for node in list(walk_dom(dom)):
-            if node.nodeType == Node.COMMENT_NODE:
-                remove_node(node)  # TODO: line not covered
-            elif node.nodeName == 'style':
+            if node.nodeName == 'style':
                 remove_node(node)
             elif node.nodeName == 'font':
                 unwrap(node)  # TODO: line not covered
@@ -161,9 +159,6 @@ class HashableNode(object):
         self.node = node
 
     def __eq__(self, other):
-        if not hasattr(other, 'node'):
-            return False
-
         return (self.node.nodeType == other.node.nodeType and
                 self.node.nodeName == other.node.nodeName and
                 self.node.nodeValue == other.node.nodeValue and
@@ -211,10 +206,6 @@ class FuzzyHashableTree(object):
 
         if HashableNode(self.node) != HashableNode(other.node):
             return False
-
-        # Check for an exact tree match.
-        if HashableTree(self.node) == HashableTree(other.node):
-            return True
 
         # Check for a fuzzy match.
         if check_text_similarity(self.node, other.node, cutoff=self.cutoff):
@@ -321,6 +312,10 @@ def ancestors(node):
 
 
 def walk_dom(dom, elements_only=False):
+    """
+    >>> list(walk_dom(None))
+    []
+    """
     # allow calling this on a document as well as as node
     if hasattr(dom, 'documentElement'):
         dom = dom.documentElement
@@ -424,3 +419,14 @@ def unwrap(node):
     for child in list(node.childNodes):
         node.parentNode.insertBefore(child, node)
     remove_node(node)
+
+
+def node_compare(a, b):
+    try:
+        if a.tagName == 'del' and b.tagName == 'ins':
+            return -1  # TODO: line not covered
+        if a.tagName == 'ins' and b.tagName == 'del':
+            return 1
+    except AttributeError:
+        pass
+    return 0

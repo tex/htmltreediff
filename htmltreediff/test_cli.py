@@ -7,6 +7,7 @@ from nose.tools import assert_equal
 
 from htmltreediff.cli import main
 
+
 def test_main():
     # Run the command line interface main function.
     f1 = tempfile.NamedTemporaryFile()
@@ -35,4 +36,3 @@ def test_main():
         )
     finally:
         sys.stdout = old_stdout
-

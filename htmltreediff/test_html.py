@@ -16,7 +16,7 @@ from htmltreediff.util import (
 from htmltreediff.test_util import collapse
 
 
-## Preprocessing
+# Preprocessing
 
 preprocessing_cases = [
     (
@@ -49,19 +49,31 @@ preprocessing_cases = [
         '<p>xxxyyy</p>',
         '<body><p>xxxyyy</p></body>',
     ),
-#TODO failing
-#    (
-#        'illegal text nodes inside tables',
-#        '''
-#        <table>
-#            illegal text
-#            <tr>
-#                <td>stuff</td>
-#            </tr>
-#        </table>
-#        ''',
-#        'illegal text <table><tbody><tr><td>stuff</td></tr></tbody></table>',
-#    ),
+    (
+        'ignore font tags',
+        '<font type="text/css"></font>',
+        '',
+        '<body/>',
+    ),
+    (
+        'ignore coment tags',
+        '<!-- test -->',
+        '',
+        '<body/>',
+    ),
+    # (
+    #     'illegal text nodes inside tables',
+    #     '''
+    #     <table>
+    #         illegal text
+    #         <tr>
+    #             <td>stuff</td>
+    #         </tr>
+    #     </table>
+    #     ''',
+    #     '<table> illegal text<tbody><tr><td>stuff</td></tr></tbody></table>',
+    #     '',
+    # ),
 ]
 
 
@@ -128,7 +140,7 @@ def test_remove_insignificant_text_nodes_nbsp():
     )
 
 
-## Post-processing
+# Post-processing
 
 def test_other_node_type_inserted():
     changes = diff(
@@ -207,6 +219,16 @@ def test_distribute():
                 minidom_tostring(distributed),
             )
         yield test, original, distributed
+
+
+def test_get_location():
+    html = '<ins><li>A</li><li><em>B</em></li></ins>'
+    original = parse_minidom(html)
+    try:
+        get_location(original, [10])
+        raise AssertionError('ValueError not raised')
+    except ValueError:
+        pass
 
 
 def test_fix_lists():
