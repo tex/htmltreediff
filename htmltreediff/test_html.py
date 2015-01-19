@@ -383,7 +383,7 @@ def test_fix_lists():
               </del>
               <ins>
                 <li>BBB</li>
-              </inst>
+              </ins>
             </ol>
             ''',
             '''
@@ -401,7 +401,7 @@ def test_fix_lists():
               </del>
               <ins>
                 <li class="new">BBB</li>
-              </inst>
+              </ins>
             </ol>
             ''',
             '''
@@ -420,7 +420,7 @@ def test_fix_lists():
                 <li><strong>BBB</strong></li>
               <ins>
                 <li>CCC</li>
-              </inst>
+              </ins>
             </ol>
             ''',
             '''
@@ -443,7 +443,7 @@ def test_fix_lists():
                 <li><strong>BBB</strong></li>
               <ins>
                 <li>CCC</li>
-              </inst>
+              </ins>
             </ol>
             ''',
             '''
@@ -468,7 +468,7 @@ def test_fix_lists():
               </del>
               <ins>
                 <li>CCC</li>
-              </inst>
+              </ins>
             </ol>
             ''',
             '''
@@ -489,7 +489,7 @@ def test_fix_lists():
               </del>
               <ins>
                 <foo>BBB</foo>
-              </inst>
+              </ins>
             </ol>
             ''',
             '''
@@ -499,7 +499,7 @@ def test_fix_lists():
                 </li>
                 <ins>
                     <foo>BBB</foo>
-                </inst>
+                </ins>
             </ol>
             ''',
         ),
@@ -512,7 +512,7 @@ def test_fix_lists():
               </del>
               <ins>
                 BBB
-              </inst>
+              </ins>
             </ol>
             ''',
             '''
@@ -522,7 +522,7 @@ def test_fix_lists():
                 </li>
                 <ins>
                     BBB
-                </inst>
+                </ins>
             </ol>
             ''',
         ),
