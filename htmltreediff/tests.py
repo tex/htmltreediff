@@ -821,6 +821,140 @@ test_cases = [  # test case = (old html, new html, inline changes, edit script)
             }),
         ]
     ),
+    (
+        'TD content change does not show TD removal',
+        '''
+        <table>
+            <tbody>
+                <tr>
+                    <td>AAA</td>
+                    <td>BBB</td>
+                </tr>
+            </tbody>
+        </table>
+        ''',
+        collapse('''
+        <table>
+            <tbody>
+                <tr>
+                    <td>ZZZ</td>
+                    <td>BBB</td>
+                </tr>
+            </tbody>
+        </table>
+        '''),
+        collapse('''
+        <table>
+            <tbody>
+                <tr>
+                    <td><del>AAA</del><ins>ZZZ</ins></td>
+                    <td>BBB</td>
+                </tr>
+            </tbody>
+        </table>
+        '''),
+        [  # The result of this will be fixed by fix_tables
+            ('delete', [0, 0, 0, 0, 0], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'AAA',
+            }),
+            ('delete', [0, 0, 0, 0], {
+                'node_type': Node.ELEMENT_NODE,
+                'node_name': u'td',
+            }),
+            ('insert', [0, 0, 0, 0], {
+                'node_type': Node.ELEMENT_NODE,
+                'node_name': u'td',
+            }),
+            ('insert', [0, 0, 0, 0, 0], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'ZZZ',
+            }),
+        ],
+    ),
+    (
+        'LI content change does not show LI removal',
+        '''
+        <ol>
+            <li>AAA</li>
+            <li>BBB</li>
+        </ol>
+        ''',
+        collapse('''
+        <ol>
+            <li>ZZZ</li>
+            <li>BBB</li>
+        </ol>
+        '''),
+        collapse('''
+        <ol>
+            <li><del>AAA</del><ins>ZZZ</ins></li>
+            <li>BBB</li>
+        </ol>
+        '''),
+        [  # The result of this will be fixed by fix_lists
+            ('delete', [0, 0, 0], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'AAA',
+            }),
+            ('delete', [0, 0], {
+                'node_type': Node.ELEMENT_NODE,
+                'node_name': u'li',
+            }),
+            ('insert', [0, 0], {
+                'node_type': Node.ELEMENT_NODE,
+                'node_name': u'li',
+            }),
+            ('insert', [0, 0, 0], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'ZZZ',
+            }),
+        ],
+    ),
+    (
+        'Nested LI content change does not show LI removal',
+        collapse('''
+        <ol>
+            <li>AAA<ol>
+                    <li>BBB</li>
+                    <li>CCC</li>
+                </ol>
+            </li>
+            <li>DDD</li>
+        </ol>
+        '''),
+        collapse('''
+        <ol>
+            <li>ZZZ<ol>
+                    <li>BBB</li>
+                    <li>CCC</li>
+                </ol>
+            </li>
+            <li>DDD</li>
+        </ol>
+        '''),
+        collapse('''
+        <ol>
+            <li><del>AAA</del><ins>ZZZ</ins>
+                <ol>
+                    <li>BBB</li>
+                    <li>CCC</li>
+                </ol>
+            </li>
+            <li>DDD</li>
+        </ol>
+        '''),
+        [
+            ('delete', [0, 0, 0], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'AAA',
+            }),
+            ('insert', [0, 0, 0], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'ZZZ',
+            }),
+        ],
+    ),
 ]
 
 # test cases that should not be run in reverse
@@ -994,6 +1128,60 @@ insane_test_cases = [
     # '<ul><li>X</li></ul>',
     # '<ul><li>X</li></ul>',
     # ),
+    (
+        'LI full content change keeps attrs',
+        collapse('''
+        <ol>
+            <li id="foo" class="old">AAA</li>
+            <li>BBB</li>
+        </ol>
+        '''),
+        collapse('''
+        <ol>
+            <li class="new">ZZZ</li>
+            <li>BBB</li>
+        </ol>
+        '''),
+        collapse('''
+        <ol>
+            <li class="new"><del>AAA</del><ins>ZZZ</ins></li>
+            <li>BBB</li>
+        </ol>
+        '''),
+    ),
+    (
+        'TD content change does not show TD removal with THs',
+        collapse('''
+        <table>
+            <tbody>
+                <tr>
+                    <td>AAA</td>
+                    <td>BBB</td>
+                </tr>
+            </tbody>
+        </table>
+        '''),
+        collapse('''
+        <table>
+            <tbody>
+                <tr>
+                    <th>ZZZ</th>
+                    <td>BBB</td>
+                </tr>
+            </tbody>
+        </table>
+        '''),
+        collapse('''
+        <table>
+            <tbody>
+                <tr>
+                    <th><del>AAA</del><ins>ZZZ</ins></th>
+                    <td>BBB</td>
+                </tr>
+            </tbody>
+        </table>
+        '''),
+    ),
 ]
 
 # Assemble test cases

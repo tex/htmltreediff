@@ -374,6 +374,158 @@ def test_fix_lists():
             </ol>
             '''
         ),
+        (
+            'LI full content change does not add another LI',
+            '''
+            <ol>
+              <del>
+                <li>AAA</li>
+              </del>
+              <ins>
+                <li>BBB</li>
+              </ins>
+            </ol>
+            ''',
+            '''
+            <ol>
+              <li><del>AAA</del><ins>BBB</ins></li>
+            </ol>
+            '''
+        ),
+        (
+            'LI full content change keeps attrs',
+            '''
+            <ol>
+              <del>
+                <li class="old" id="foo">AAA</li>
+              </del>
+              <ins>
+                <li class="new">BBB</li>
+              </ins>
+            </ol>
+            ''',
+            '''
+            <ol>
+              <li class="new"><del>AAA</del><ins>BBB</ins></li>
+            </ol>
+            '''
+        ),
+        (
+            'LI changes markup internalization fix not done if next tag is not an insert',  # noqa
+            '''
+            <ol>
+              <del>
+                <li>AAA</li>
+              </del>
+                <li><strong>BBB</strong></li>
+              <ins>
+                <li>CCC</li>
+              </ins>
+            </ol>
+            ''',
+            '''
+            <ol>
+                <li class="del-li">
+                    <del>AAA</del>
+                </li>
+                <li><strong>BBB</strong></li>
+                <li><ins>CCC</ins></li>
+            </ol>
+            ''',
+        ),
+        (
+            'LI changes markup internalization fix not done if next tag is not an insert',  # noqa
+            '''
+            <ol>
+              <del>
+                <li>AAA</li>
+              </del>
+                <li><strong>BBB</strong></li>
+              <ins>
+                <li>CCC</li>
+              </ins>
+            </ol>
+            ''',
+            '''
+            <ol>
+                <li class="del-li">
+                    <del>AAA</del>
+                </li>
+                <li><strong>BBB</strong></li>
+                <li><ins>CCC</ins></li>
+            </ol>
+            ''',
+        ),
+        (
+            'LI after del must be ins',
+            '''
+            <ol>
+              <del>
+                <li>AAA</li>
+              </del>
+              <del>
+                <li>BBB</li>
+              </del>
+              <ins>
+                <li>CCC</li>
+              </ins>
+            </ol>
+            ''',
+            '''
+            <ol>
+                <li class="del-li">
+                    <del>AAA</del>
+                </li>
+                <li><del>BBB</del><ins>CCC</ins></li>
+            </ol>
+            ''',
+        ),
+        (
+            'LI changes markup internalization fix not performed if next tags child is not li',  # noqa
+            '''
+            <ol>
+              <del>
+                <li>AAA</li>
+              </del>
+              <ins>
+                <foo>BBB</foo>
+              </ins>
+            </ol>
+            ''',
+            '''
+            <ol>
+                <li class="del-li">
+                    <del>AAA</del>
+                </li>
+                <ins>
+                    <foo>BBB</foo>
+                </ins>
+            </ol>
+            ''',
+        ),
+        (
+            'LI changes markup internalization fix not performed if next tags is text',  # noqa
+            '''
+            <ol>
+              <del>
+                <li>AAA</li>
+              </del>
+              <ins>
+                BBB
+              </ins>
+            </ol>
+            ''',
+            '''
+            <ol>
+                <li class="del-li">
+                    <del>AAA</del>
+                </li>
+                <ins>
+                    BBB
+                </ins>
+            </ol>
+            ''',
+        ),
     ]
     for test_name, changes, fixed_changes in cases:
         changes = collapse(changes)

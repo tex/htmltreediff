@@ -431,6 +431,17 @@ def wrap(node, tag):
     return wrap_node
 
 
+def wrap_nodes(nodes, tag):
+    """Just like wrap, but for more than one tag at a time"""
+    wrap_node = nodes[0].ownerDocument.createElement(tag)
+    parent = nodes[0].parentNode
+    if parent:
+        parent.replaceChild(wrap_node, nodes[0])
+    for node in nodes:
+        wrap_node.appendChild(node)
+    return wrap_node
+
+
 def wrap_inner(node, tag):
     """Wrap the given tag around the contents of a node."""
     children = list(node.childNodes)
