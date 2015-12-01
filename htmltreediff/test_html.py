@@ -156,7 +156,6 @@ def test_other_node_type_inserted():
     )
 
 
-
 def test_unwrap_div_shows_as_content_change():
     changes = diff(
         '<ul><li><div>Foo bar</div></li></ul>',
