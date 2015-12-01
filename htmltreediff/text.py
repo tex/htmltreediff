@@ -160,7 +160,7 @@ class WordMatcher(SequenceMatcher):
         length = 0
         for match in self.get_matching_blocks():
             a, b, size = match
-            length += self._text_length(self.a[a:a+size])
+            length += self._text_length(self.a[a:a + size])
         return length
 
     def _text_length(self, word_sequence):
