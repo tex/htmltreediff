@@ -1,16 +1,28 @@
 #! /usr/bin/env python
-# -*- coding: utf-8 -*-
+# coding: utf-8
 
 import codecs
+import os
 
 try:
-    from setuptools import setup, find_packages, Command
+    from setuptools import setup, find_packages
 except ImportError:
     from ez_setup import use_setuptools
     use_setuptools()
-    from setuptools import setup, find_packages, Command
+    from setuptools import setup, find_packages
 
 long_description = codecs.open("README.rst", "r", "utf-8").read()
+
+
+def strip_comments(l):
+    return l.split('#', 1)[0].strip()
+
+
+def get_requirements(path):
+    for line in open(os.path.join(os.getcwd(), path)).readlines():
+        line = strip_comments(line)
+        if line:
+            yield line
 
 setup(
     name="html-tree-diff",
@@ -24,7 +36,8 @@ setup(
     packages=find_packages(),
     scripts=[],
     zip_safe=False,
-    install_requires=['lxml', 'html5lib'],
+    install_requires=list(get_requirements('requirements/default.txt')),
+    tests_require=list(get_requirements('requirements/testing.txt')),
     cmdclass={},
     classifiers=[
         "Development Status :: 3 - Alpha",
