@@ -1,15 +1,15 @@
 #! /usr/bin/env python
-# -*- coding: utf-8 -*-
+# coding: utf-8
 
 import codecs
 import os
 
 try:
-    from setuptools import setup, find_packages, Command
+    from setuptools import setup, find_packages
 except ImportError:
     from ez_setup import use_setuptools
     use_setuptools()
-    from setuptools import setup, find_packages, Command
+    from setuptools import setup, find_packages
 
 long_description = codecs.open("README.rst", "r", "utf-8").read()
 
