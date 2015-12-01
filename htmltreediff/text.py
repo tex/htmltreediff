@@ -1,5 +1,8 @@
-import re, string
+import re
+import string
+
 from difflib import SequenceMatcher, _calculate_ratio
+
 
 def full_split(text, regex):
     """
@@ -22,6 +25,7 @@ def full_split(text, regex):
         if middle:
             yield middle
         text = right
+
 
 def multi_split(text, regexes):
     """
@@ -52,6 +56,7 @@ def multi_split(text, regexes):
     # the original text.
     piece_list = [text]
     finished_pieces = set()
+
     def apply_re(regex, piece_list):
         for piece in piece_list:
             if piece in finished_pieces:
@@ -85,7 +90,7 @@ _word_split_regexes = [
     # HTML Entities
     re.compile(r'&(\w+|#\d+);', re.IGNORECASE),
     # Special cases.
-    re.compile('%s' % '|'.join(re.escape(c) for c in _word_list), re.IGNORECASE),
+    re.compile('%s' % '|'.join(re.escape(c) for c in _word_list), re.IGNORECASE),  # noqa
     # Simplified phone number pattern. Any dash-separated list of digits.
     re.compile(r'\d+(-\d+)+'),
     # Simplified date pattern. Any slash-separated list of digits.
@@ -100,14 +105,18 @@ _word_split_regexes = [
     re.compile(r'[^\s]+', re.UNICODE),
 ]
 
+
 def split_text(text):
     return multi_split(text, _word_split_regexes)
 
 _stopwords = 'a an and as at by for if in it of or so the to'
 _stopwords = set(_stopwords.strip().lower().split())
+
+
 def is_text_junk(word):
     """Treat whitespace and stopwords as junk for text matching."""
     return word.isspace() or word.lower() in _stopwords
+
 
 class WordMatcher(SequenceMatcher):
     """
@@ -126,11 +135,17 @@ class WordMatcher(SequenceMatcher):
 
         Each word has weight equal to its length for this measure
 
-        >>> m = WordMatcher(a=['abcdef', '12'], b=['abcdef', '34']) # 3/4 of the text is the same
+        >>> # 3/4 of the text is the same
+        >>> m = WordMatcher(a=['abcdef', '12'], b=['abcdef', '34'])
         >>> '%.3f' % m.ratio() # normal ratio fails
         '0.500'
         >>> '%.3f' % m.text_ratio() # text ratio is accurate
         '0.750'
+        >>> m = WordMatcher()
+        >>> '%.3f' % m.ratio() # normal ratio fails
+        '1.000'
+        >>> '%.3f' % m.text_ratio() # text ratio is accurate
+        '1.000'
         """
         return _calculate_ratio(
             self.match_length(),
@@ -138,11 +153,14 @@ class WordMatcher(SequenceMatcher):
         )
 
     def match_length(self):
-        """ Find the total length of all words that match between the two sequences."""
+        """
+        Find the total length of all words that match between the two
+        sequences.
+        """
         length = 0
         for match in self.get_matching_blocks():
             a, b, size = match
-            length += self._text_length(self.a[a:a+size])
+            length += self._text_length(self.a[a:a + size])
         return length
 
     def _text_length(self, word_sequence):

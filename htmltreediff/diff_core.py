@@ -64,14 +64,12 @@ class Differ():
         # the text-similar matches and the tag-only matches, we still have more
         # work to do, so we recurse on these. The non-matching parts that
         # remain are used to output edit script entries.
-        old_children = list(get_location(
-            self.old_dom,
-            old_location,
-        ).childNodes)
-        new_children = list(get_location(
-            self.new_dom,
-            new_location,
-        ).childNodes)
+        old_children = list(
+            get_location(self.old_dom, old_location).childNodes,
+        )
+        new_children = list(
+            get_location(self.new_dom, new_location).childNodes,
+        )
         if not old_children and not new_children:
             return
 
@@ -85,8 +83,8 @@ class Differ():
             if tag == 'delete':
                 assert j1 == j2
                 # delete range from right to left
-                items = reversed(list(enumerate(old_children[i1:i2])))
-                for index, child in items:
+                children = reversed(list(enumerate(old_children[i1:i2])))
+                for index, child in children:
                     self.delete(old_location + [i1 + index], child)
                     old_children.pop(i1 + index)
             elif tag == 'insert':
@@ -95,13 +93,9 @@ class Differ():
                 for index, child in enumerate(new_children[j1:j2]):
                     self.insert(new_location + [i1 + index], child)
                     old_children.insert(i1 + index, child)
-            recursion_indices = list(adjust_indices(
-                recursion_indices,
-                i1,
-                i2,
-                j1,
-                j2,
-            ))
+            recursion_indices = list(
+                adjust_indices(recursion_indices, i1, i2, j1, j2),
+            )
 
         # Recurse to deeper level.
         for old_index, new_index in recursion_indices:

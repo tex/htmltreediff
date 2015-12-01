@@ -1,11 +1,13 @@
 from htmltreediff.util import (
+    check_text_similarity,
+    is_element,
+    minidom_tostring,
     parse_minidom,
     parse_text,
-    minidom_tostring,
+    remove_node,
     unwrap,
     wrap_inner,
-    remove_node,
-    check_text_similarity,
+    wrap_nodes,
 )
 from htmltreediff.changes import dom_diff, distribute
 
@@ -46,9 +48,49 @@ def diff(old_html, new_html, cutoff=0.0, plaintext=False, pretty=False):
     return minidom_tostring(dom, pretty=pretty)
 
 
+def _internalize_changes_markup(dom, child_tag_names):
+    # Delete tags are always ordered first.
+    for del_tag in list(dom.getElementsByTagName('del')):
+        ins_tag = del_tag.nextSibling
+        # The one child tag of `del_tag` should be child_tag_names
+        if len(del_tag.childNodes) != 1:
+            continue
+        if ins_tag is None or len(ins_tag.childNodes) != 1:
+            continue
+        if ins_tag.tagName != 'ins':
+            continue
+        deleted_tag = del_tag.firstChild
+        if not is_element(deleted_tag):
+            continue
+        if deleted_tag.tagName not in child_tag_names:
+            continue
+        # The one child tag of `ins_tag` should be child_tag_names
+        inserted_tag = ins_tag.firstChild
+        if not is_element(inserted_tag):
+            continue
+        if inserted_tag.tagName not in child_tag_names:
+            continue
+
+        attributes = dict(
+            [key, value] for key, value in
+            inserted_tag.attributes.items()
+        )
+        nodes_to_unwrap = [
+            deleted_tag,
+            inserted_tag,
+        ]
+        for n in nodes_to_unwrap:
+            unwrap(n)
+        new_node = wrap_nodes([del_tag, ins_tag], inserted_tag.tagName)
+        for key, value in attributes.items():
+            new_node.setAttribute(key, value)
+
+
 def fix_lists(dom):
     # <ins> and <del> tags are not allowed within <ul> or <ol> tags.
     # Move them to the nearest li, so that the numbering isn't interrupted.
+
+    _internalize_changes_markup(dom, set(['li']))
 
     # Find all del > li and ins > li sets.
     del_tags = set()
@@ -73,6 +115,8 @@ def fix_lists(dom):
 
 
 def fix_tables(dom):
+    _internalize_changes_markup(dom, set(['td', 'th']))
+
     # Show table row insertions
     tags = set()
     for node in list(dom.getElementsByTagName('tr')):

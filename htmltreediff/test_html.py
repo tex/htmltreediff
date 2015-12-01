@@ -16,7 +16,7 @@ from htmltreediff.util import (
 from htmltreediff.test_util import collapse
 
 
-## Preprocessing
+# Preprocessing
 
 preprocessing_cases = [
     (
@@ -49,19 +49,33 @@ preprocessing_cases = [
         '<p>xxxyyy</p>',
         '<body><p>xxxyyy</p></body>',
     ),
-#TODO failing
-#    (
-#        'illegal text nodes inside tables',
-#        '''
-#        <table>
-#            illegal text
-#            <tr>
-#                <td>stuff</td>
-#            </tr>
-#        </table>
-#        ''',
-#        'illegal text <table><tbody><tr><td>stuff</td></tr></tbody></table>',
-#    ),
+    (
+        'ignore font tags',
+        '<font type="text/css"></font>',
+        '',
+        '<body/>',
+    ),
+    (
+        'ignore comment tags',
+        '<!-- test -->',
+        '',
+        '<body/>',
+    ),
+    (
+        'illegal text nodes inside tables are not removed',
+        '''
+        <table>
+            illegal text
+            <tbody>
+                <tr>
+                    <td>stuff</td>
+                </tr>
+            </tbody>
+        </table>
+        ''',
+        '<table> illegal text <tbody><tr><td>stuff</td></tr></tbody></table>',
+        '<body><table> illegal text <tbody><tr><td>stuff</td></tr></tbody></table></body>',  # noqa
+    ),
 ]
 
 
@@ -114,6 +128,7 @@ def test_remove_insignificant_text_nodes_nbsp():
             <td> </td>
             <td>&#160;</td>
             <td>&nbsp;</td>
+            AAA
         </tr>
         </tbody>
         </table>
@@ -124,11 +139,22 @@ def test_remove_insignificant_text_nodes_nbsp():
     assert_equal(
         html,
         ('<table><tbody><tr><td> </td><td> </td><td> </td>'
-         '</tr></tbody></table>'),
+         ' AAA </tr></tbody></table>'),
     )
 
 
-## Post-processing
+# Post-processing
+
+def test_other_node_type_inserted():
+    changes = diff(
+        u'<p>foo</p>',
+        u'<p>foo bar</p><?xml version=\'1.0\' encoding=\'utf-8\'?>',
+    )
+    assert_equal(
+        changes,
+        '<p>foo<ins> bar</ins></p>',
+    )
+
 
 
 def test_unwrap_div_shows_as_content_change():
@@ -208,6 +234,16 @@ def test_distribute():
                 minidom_tostring(distributed),
             )
         yield test, original, distributed
+
+
+def test_get_location():
+    html = '<ins><li>A</li><li><em>B</em></li></ins>'
+    original = parse_minidom(html)
+    try:
+        get_location(original, [10])
+        raise AssertionError('ValueError not raised')
+    except ValueError:
+        pass
 
 
 def test_fix_lists():
@@ -349,6 +385,158 @@ def test_fix_lists():
               <li class="del-li"><del>one</del></li>
             </ol>
             '''
+        ),
+        (
+            'LI full content change does not add another LI',
+            '''
+            <ol>
+              <del>
+                <li>AAA</li>
+              </del>
+              <ins>
+                <li>BBB</li>
+              </ins>
+            </ol>
+            ''',
+            '''
+            <ol>
+              <li><del>AAA</del><ins>BBB</ins></li>
+            </ol>
+            '''
+        ),
+        (
+            'LI full content change keeps attrs',
+            '''
+            <ol>
+              <del>
+                <li class="old" id="foo">AAA</li>
+              </del>
+              <ins>
+                <li class="new">BBB</li>
+              </ins>
+            </ol>
+            ''',
+            '''
+            <ol>
+              <li class="new"><del>AAA</del><ins>BBB</ins></li>
+            </ol>
+            '''
+        ),
+        (
+            'LI changes markup internalization fix not done if next tag is not an insert',  # noqa
+            '''
+            <ol>
+              <del>
+                <li>AAA</li>
+              </del>
+                <li><strong>BBB</strong></li>
+              <ins>
+                <li>CCC</li>
+              </ins>
+            </ol>
+            ''',
+            '''
+            <ol>
+                <li class="del-li">
+                    <del>AAA</del>
+                </li>
+                <li><strong>BBB</strong></li>
+                <li><ins>CCC</ins></li>
+            </ol>
+            ''',
+        ),
+        (
+            'LI changes markup internalization fix not done if next tag is not an insert',  # noqa
+            '''
+            <ol>
+              <del>
+                <li>AAA</li>
+              </del>
+                <li><strong>BBB</strong></li>
+              <ins>
+                <li>CCC</li>
+              </ins>
+            </ol>
+            ''',
+            '''
+            <ol>
+                <li class="del-li">
+                    <del>AAA</del>
+                </li>
+                <li><strong>BBB</strong></li>
+                <li><ins>CCC</ins></li>
+            </ol>
+            ''',
+        ),
+        (
+            'LI after del must be ins',
+            '''
+            <ol>
+              <del>
+                <li>AAA</li>
+              </del>
+              <del>
+                <li>BBB</li>
+              </del>
+              <ins>
+                <li>CCC</li>
+              </ins>
+            </ol>
+            ''',
+            '''
+            <ol>
+                <li class="del-li">
+                    <del>AAA</del>
+                </li>
+                <li><del>BBB</del><ins>CCC</ins></li>
+            </ol>
+            ''',
+        ),
+        (
+            'LI changes markup internalization fix not performed if next tags child is not li',  # noqa
+            '''
+            <ol>
+              <del>
+                <li>AAA</li>
+              </del>
+              <ins>
+                <foo>BBB</foo>
+              </ins>
+            </ol>
+            ''',
+            '''
+            <ol>
+                <li class="del-li">
+                    <del>AAA</del>
+                </li>
+                <ins>
+                    <foo>BBB</foo>
+                </ins>
+            </ol>
+            ''',
+        ),
+        (
+            'LI changes markup internalization fix not performed if next tags is text',  # noqa
+            '''
+            <ol>
+              <del>
+                <li>AAA</li>
+              </del>
+              <ins>
+                BBB
+              </ins>
+            </ol>
+            ''',
+            '''
+            <ol>
+                <li class="del-li">
+                    <del>AAA</del>
+                </li>
+                <ins>
+                    BBB
+                </ins>
+            </ol>
+            ''',
         ),
     ]
     for test_name, changes, fixed_changes in cases:

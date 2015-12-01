@@ -1,23 +1,26 @@
 from htmltreediff.text import split_text
 from htmltreediff.util import (
-    is_text,
-    is_element,
     ancestors,
-    walk_dom,
-    remove_node,
     insert_or_append,
+    is_element,
+    is_text,
+    node_compare,
+    remove_node,
+    unwrap,
+    walk_dom,
     wrap,
     wrap_inner,
-    unwrap,
 )
 from htmltreediff.diff_core import Differ
 from htmltreediff.edit_script_runner import EditScriptRunner
+
 
 def split_text_nodes(dom):
     for text_node in list(walk_dom(dom)):
         if not is_text(text_node):
             continue
         split_node(text_node)
+
 
 def split_node(node):
     # Split text node in into user-friendly chunks.
@@ -29,6 +32,7 @@ def split_node(node):
         piece_node = node.ownerDocument.createTextNode(piece)
         parent.insertBefore(piece_node, node)
     remove_node(node)
+
 
 def dom_diff(old_dom, new_dom):
     # Split all the text nodes in the old and new dom.
@@ -44,6 +48,7 @@ def dom_diff(old_dom, new_dom):
     dom = runner.run_edit_script()
     add_changes_markup(dom, runner.ins_nodes, runner.del_nodes)
     return dom
+
 
 def add_changes_markup(dom, ins_nodes, del_nodes):
     """
@@ -64,6 +69,7 @@ def add_changes_markup(dom, ins_nodes, del_nodes):
     merge_adjacent(dom, 'del')
     merge_adjacent(dom, 'ins')
 
+
 def remove_nesting(dom, tag_name):
     """
     Unwrap items in the node list that have ancestors with the same tag.
@@ -78,6 +84,7 @@ def remove_nesting(dom, tag_name):
                 unwrap(node)
                 break
 
+
 def sort_nodes(dom, cmp_func):
     """
     Sort the nodes of the dom in-place, based on a comparison function.
@@ -89,17 +96,10 @@ def sort_nodes(dom, cmp_func):
             node.parentNode.insertBefore(node, prev_sib)
             prev_sib = node.previousSibling
 
+
 def sort_del_before_ins(dom):
-    def node_cmp(a, b):
-        try:
-            if a.tagName == 'del' and b.tagName == 'ins':
-                return -1 #TODO: line not covered
-            if a.tagName == 'ins' and b.tagName == 'del':
-                return 1
-        except AttributeError:
-            pass
-        return 0
-    sort_nodes(dom, cmp_func=node_cmp)
+    sort_nodes(dom, cmp_func=node_compare)
+
 
 def merge_adjacent(dom, tag_name):
     """
@@ -113,6 +113,7 @@ def merge_adjacent(dom, tag_name):
                 prev_sib.appendChild(child)
             remove_node(node)
 
+
 def distribute(node):
     """
     Wrap a copy of the given element around the contents of each of its
@@ -124,15 +125,16 @@ def distribute(node):
     for c in children:
         wrap_inner(c, tag_name)
 
+
 def _strip_changes_new(node):
     for ins_node in node.getElementsByTagName('ins'):
         unwrap(ins_node)
     for del_node in node.getElementsByTagName('del'):
         remove_node(del_node)
 
+
 def _strip_changes_old(node):
     for ins_node in node.getElementsByTagName('ins'):
         remove_node(ins_node)
     for del_node in node.getElementsByTagName('del'):
         unwrap(del_node)
-

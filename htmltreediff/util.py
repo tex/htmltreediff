@@ -4,7 +4,7 @@ from xml.dom import minidom, Node
 
 from htmltreediff.text import WordMatcher, split_text
 
-## DOM utilities ##
+# DOM utilities ##
 # parsing and cleaning #
 from xml.dom.pulldom import SAX2DOM
 import lxml.html
@@ -52,12 +52,10 @@ def parse_minidom(xml, clean=True, strict_xml=False):
             remove_insignificant_text_nodes(dom)
         # clean up irrelevant content
         for node in list(walk_dom(dom)):
-            if node.nodeType == Node.COMMENT_NODE:
-                remove_node(node)  # TODO: line not covered
-            elif node.nodeName == 'style':
+            if node.nodeName == 'style':
                 remove_node(node)
             elif node.nodeName == 'font':
-                unwrap(node)  # TODO: line not covered
+                unwrap(node)
             elif node.nodeName == 'span':
                 unwrap(node)
     dom.normalize()
@@ -161,9 +159,6 @@ class HashableNode(object):
         self.node = node
 
     def __eq__(self, other):
-        if not hasattr(other, 'node'):
-            return False
-
         return (self.node.nodeType == other.node.nodeType and
                 self.node.nodeName == other.node.nodeName and
                 self.node.nodeValue == other.node.nodeValue and
@@ -211,10 +206,6 @@ class FuzzyHashableTree(object):
 
         if HashableNode(self.node) != HashableNode(other.node):
             return False
-
-        # Check for an exact tree match.
-        if HashableTree(self.node) == HashableTree(other.node):
-            return True
 
         # Check for a fuzzy match.
         if check_text_similarity(self.node, other.node, cutoff=self.cutoff):
@@ -268,15 +259,15 @@ def remove_insignificant_text_nodes(dom):
     whitespace. For elements that may have text, collapse multiple spaces to a
     single space.
     """
-    nodes_to_remove = []
+    insignificant_whitespace_only_text_nodes = []
     for node in walk_dom(dom):
         if is_text(node):
             text = node.nodeValue
-            if node.parentNode.tagName in _non_text_node_tags:
-                nodes_to_remove.append(node)
+            if node.parentNode.tagName in _non_text_node_tags and not text.strip():  # noqa
+                insignificant_whitespace_only_text_nodes.append(node)
             else:
                 node.nodeValue = re.sub(r'\s+', ' ', text)
-    for node in nodes_to_remove:
+    for node in insignificant_whitespace_only_text_nodes:
         remove_node(node)
 
 
@@ -308,7 +299,6 @@ def get_location(dom, location):
     for i in location:
         node = get_child(node, i)
         if not node:
-            # TODO: line not covered
             raise ValueError('Node at location %s does not exist.' % location)
     return node
 
@@ -320,14 +310,39 @@ def ancestors(node):
         ancestor = ancestor.parentNode
 
 
+def _print_helper(node):
+    tag_name = 'Text'
+    if hasattr(node, 'tagName'):
+        tag_name = node.tagName
+    return tag_name, node.nodeValue
+
+
 def walk_dom(dom, elements_only=False):
+    """
+    >>> list(walk_dom(None))
+    []
+    >>> result = list(walk_dom(parse_minidom(
+    ...     '<ol><li>AAA</li>BBB<li>CCC</li></ol>')))
+    >>> result = [_print_helper(r) for r in result]
+    >>> expected = [
+    ...     ('body', None),
+    ...     ('ol', None),
+    ...     ('li', None),
+    ...     ('Text', 'AAA'),
+    ...     ('Text', 'BBB'),
+    ...     ('li', None),
+    ...     ('Text', 'CCC'),
+    ... ]
+    >>> result == expected
+    True
+    """
     # allow calling this on a document as well as as node
     if hasattr(dom, 'documentElement'):
         dom = dom.documentElement
 
     def walk(node):
         if not node:
-            return  # TODO: line not covered
+            return
         if elements_only and not is_element(node):
             return
         yield node
@@ -353,6 +368,9 @@ def tree_words(node):
     >>> list(tree_words(parse_minidom(
     ...     '<h1>one</h1> two <div>three<em>four</em></div>')))
     ['one', 'two', 'three', 'four']
+    >>> list(tree_words(parse_minidom(
+    ...     '<ol><li>AAA</li>BBB<li>CCC</li></ol>')))
+    ['AAA', 'BBB', 'CCC']
     """
     for word in split_text(tree_text(node)):
         word = word.strip()
@@ -365,6 +383,9 @@ def tree_text(node):
     >>> tree_text(parse_minidom(
     ...     '<h1>one</h1>two<div>three<em>four</em></div>'))
     'one two three four'
+    >>> tree_text(parse_minidom(
+    ...     '<ol><li>AAA</li>BBB<li>CCC</li></ol>'))
+    'AAA BBB CCC'
     """
     text = []
     for descendant in walk_dom(node):
@@ -410,6 +431,17 @@ def wrap(node, tag):
     return wrap_node
 
 
+def wrap_nodes(nodes, tag):
+    """Just like wrap, but for more than one tag at a time"""
+    wrap_node = nodes[0].ownerDocument.createElement(tag)
+    parent = nodes[0].parentNode
+    if parent:
+        parent.replaceChild(wrap_node, nodes[0])
+    for node in nodes:
+        wrap_node.appendChild(node)
+    return wrap_node
+
+
 def wrap_inner(node, tag):
     """Wrap the given tag around the contents of a node."""
     children = list(node.childNodes)
@@ -424,3 +456,14 @@ def unwrap(node):
     for child in list(node.childNodes):
         node.parentNode.insertBefore(child, node)
     remove_node(node)
+
+
+def node_compare(a, b):
+    try:
+        if a.tagName == 'del' and b.tagName == 'ins':
+            return -1
+        if a.tagName == 'ins' and b.tagName == 'del':
+            return 1
+    except AttributeError:
+        pass
+    return 0

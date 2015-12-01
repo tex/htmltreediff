@@ -27,7 +27,7 @@ from htmltreediff.test_util import (
 
 # since the test cases get automatically reversed, only include insert cases,
 # not delete cases
-test_cases = [ # test case = (old html, new html, inline changes, edit script)
+test_cases = [  # test case = (old html, new html, inline changes, edit script)
     (
         'no changes',
         '<h1>one</h1>',
@@ -36,13 +36,26 @@ test_cases = [ # test case = (old html, new html, inline changes, edit script)
         [],
     ),
     (
+        'nothing',
+        '',
+        '',
+        '',
+        [],
+    ),
+    (
         'simple insert',
         '<h1>one</h1>',
         '<h1>one</h1><h2>two</h2>',
         '<h1>one</h1><ins><h2>two</h2></ins>',
         [
-            ('insert', [1], {'node_type': Node.ELEMENT_NODE, 'node_name': u'h2'}),
-            ('insert', [1, 0], {'node_type': Node.TEXT_NODE, 'node_value': u'two'}),
+            ('insert', [1], {
+                'node_type': Node.ELEMENT_NODE,
+                'node_name': u'h2',
+            }),
+            ('insert', [1, 0], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'two',
+            }),
         ]
     ),
     (
@@ -51,7 +64,10 @@ test_cases = [ # test case = (old html, new html, inline changes, edit script)
         '<div></div>',
         '<ins><div></div></ins>',
         [
-            ('insert', [0], {'node_type': Node.ELEMENT_NODE, 'node_name': u'div'}),
+            ('insert', [0], {
+                'node_type': Node.ELEMENT_NODE,
+                'node_name': u'div',
+            }),
         ]
     ),
     (
@@ -60,7 +76,10 @@ test_cases = [ # test case = (old html, new html, inline changes, edit script)
         '<div/>',
         '<ins><div/></ins>',
         [
-            ('insert', [0], {'node_type': Node.ELEMENT_NODE, 'node_name': u'div'}),
+            ('insert', [0], {
+                'node_type': Node.ELEMENT_NODE,
+                'node_name': u'div',
+            }),
         ]
     ),
     (
@@ -69,7 +88,10 @@ test_cases = [ # test case = (old html, new html, inline changes, edit script)
         '<div></div>\n',
         '<ins><div></div></ins>\n',
         [
-            ('insert', [0], {'node_type': Node.ELEMENT_NODE, 'node_name': u'div'}),
+            ('insert', [0], {
+                'node_type': Node.ELEMENT_NODE,
+                'node_name': u'div',
+            }),
         ]
     ),
     (
@@ -78,7 +100,10 @@ test_cases = [ # test case = (old html, new html, inline changes, edit script)
         '<div></div>\r\n',
         '<ins><div></div></ins>\r\n',
         [
-            ('insert', [0], {'node_type': Node.ELEMENT_NODE, 'node_name': u'div'}),
+            ('insert', [0], {
+                'node_type': Node.ELEMENT_NODE,
+                'node_name': u'div',
+            }),
         ]
     ),
     (
@@ -99,8 +124,14 @@ test_cases = [ # test case = (old html, new html, inline changes, edit script)
         '<div><h1>one</h1>tail</div>',
         '<div><ins><h1>one</h1></ins>tail</div>',
         [
-            ('insert', [0, 0], {'node_type': Node.ELEMENT_NODE, 'node_name': u'h1'}),
-            ('insert', [0, 0, 0], {'node_type': Node.TEXT_NODE, 'node_value': u'one'}),
+            ('insert', [0, 0], {
+                'node_type': Node.ELEMENT_NODE,
+                'node_name': u'h1',
+            }),
+            ('insert', [0, 0, 0], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'one',
+            }),
         ]
     ),
     (
@@ -109,8 +140,14 @@ test_cases = [ # test case = (old html, new html, inline changes, edit script)
         '<h1>one</h1><h2>two</h2>tail',
         '<h1>one</h1><ins><h2>two</h2></ins>tail',
         [
-            ('insert', [1], {'node_type': Node.ELEMENT_NODE, 'node_name': u'h2'}),
-            ('insert', [1, 0], {'node_type': Node.TEXT_NODE, 'node_value': u'two'}),
+            ('insert', [1], {
+                'node_type': Node.ELEMENT_NODE,
+                'node_name': u'h2',
+            }),
+            ('insert', [1, 0], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'two',
+            }),
         ]
     ),
     (
@@ -119,8 +156,14 @@ test_cases = [ # test case = (old html, new html, inline changes, edit script)
         '<h2>two</h2><h1>one</h1>',
         '<ins><h2>two</h2></ins><h1>one</h1>',
         [
-            ('insert', [0], {'node_type': Node.ELEMENT_NODE, 'node_name': u'h2'}),
-            ('insert', [0, 0], {'node_type': Node.TEXT_NODE, 'node_value': u'two'}),
+            ('insert', [0], {
+                'node_type': Node.ELEMENT_NODE,
+                'node_name': u'h2',
+            }),
+            ('insert', [0, 0], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'two',
+            }),
         ]
     ),
     (
@@ -129,10 +172,22 @@ test_cases = [ # test case = (old html, new html, inline changes, edit script)
         '<h2>two</h2>',
         '<del><h1>one</h1></del><ins><h2>two</h2></ins>',
         [
-            ('delete', [0, 0], {'node_type': Node.TEXT_NODE, 'node_value': u'one'}),
-            ('delete', [0], {'node_type': Node.ELEMENT_NODE, 'node_name': u'h1'}),
-            ('insert', [0], {'node_type': Node.ELEMENT_NODE, 'node_name': u'h2'}),
-            ('insert', [0, 0], {'node_type': Node.TEXT_NODE, 'node_value': u'two'}),
+            ('delete', [0, 0], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'one',
+            }),
+            ('delete', [0], {
+                'node_type': Node.ELEMENT_NODE,
+                'node_name': u'h1',
+            }),
+            ('insert', [0], {
+                'node_type': Node.ELEMENT_NODE,
+                'node_name': u'h2',
+            }),
+            ('insert', [0, 0], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'two',
+            }),
         ]
     ),
     (
@@ -141,10 +196,22 @@ test_cases = [ # test case = (old html, new html, inline changes, edit script)
         '<h2>two</h2><h3>three</h3>',
         '<del><h1>one</h1></del><h2>two</h2><ins><h3>three</h3></ins>',
         [
-            ('delete', [0, 0], {'node_type': Node.TEXT_NODE, 'node_value': u'one'}),
-            ('delete', [0], {'node_type': Node.ELEMENT_NODE, 'node_name': u'h1'}),
-            ('insert', [1], {'node_type': Node.ELEMENT_NODE, 'node_name': u'h3'}),
-            ('insert', [1, 0], {'node_type': Node.TEXT_NODE, 'node_value': u'three'}),
+            ('delete', [0, 0], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'one',
+            }),
+            ('delete', [0], {
+                'node_type': Node.ELEMENT_NODE,
+                'node_name': u'h1',
+            }),
+            ('insert', [1], {
+                'node_type': Node.ELEMENT_NODE,
+                'node_name': u'h3',
+            }),
+            ('insert', [1, 0], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'three',
+            }),
         ]
     ),
     (
@@ -153,10 +220,22 @@ test_cases = [ # test case = (old html, new html, inline changes, edit script)
         '<h2>two</h2>tail',
         '<del><h1>one</h1></del><ins><h2>two</h2></ins>tail',
         [
-            ('delete', [0, 0], {'node_type': Node.TEXT_NODE, 'node_value': u'one'}),
-            ('delete', [0], {'node_type': Node.ELEMENT_NODE, 'node_name': u'h1'}),
-            ('insert', [0], {'node_type': Node.ELEMENT_NODE, 'node_name': u'h2'}),
-            ('insert', [0, 0], {'node_type': Node.TEXT_NODE, 'node_value': u'two'}),
+            ('delete', [0, 0], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'one',
+            }),
+            ('delete', [0], {
+                'node_type': Node.ELEMENT_NODE,
+                'node_name': u'h1',
+            }),
+            ('insert', [0], {
+                'node_type': Node.ELEMENT_NODE,
+                'node_name': u'h2',
+            }),
+            ('insert', [0, 0], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'two',
+            }),
         ]
     ),
     (
@@ -165,58 +244,142 @@ test_cases = [ # test case = (old html, new html, inline changes, edit script)
         '<h1>one</h1><h2>two</h2><h3>three</h3>',
         '<ins><h1>one</h1><h2>two</h2></ins><h3>three</h3>',
         [
-            ('insert', [0], {'node_type': Node.ELEMENT_NODE, 'node_name': u'h1'}),
-            ('insert', [0, 0], {'node_type': Node.TEXT_NODE, 'node_value': u'one'}),
-            ('insert', [1], {'node_type': Node.ELEMENT_NODE, 'node_name': u'h2'}),
-            ('insert', [1, 0], {'node_type': Node.TEXT_NODE, 'node_value': u'two'}),
+            ('insert', [0], {
+                'node_type': Node.ELEMENT_NODE,
+                'node_name': u'h1',
+            }),
+            ('insert', [0, 0], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'one',
+            }),
+            ('insert', [1], {
+                'node_type': Node.ELEMENT_NODE,
+                'node_name': u'h2',
+            }),
+            ('insert', [1, 0], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'two',
+            }),
         ]
     ),
     (
         'multiple node replace',
         '<h1>one</h1><h2>two</h2>',
         '<h3>three</h3><h4>four</h4>',
-        '<del><h1>one</h1><h2>two</h2></del><ins><h3>three</h3><h4>four</h4></ins>',
+        '<del><h1>one</h1><h2>two</h2></del><ins><h3>three</h3><h4>four</h4></ins>',  # noqa
         [
-            ('delete', [1, 0], {'node_type': Node.TEXT_NODE, 'node_value': u'two'}),
-            ('delete', [1], {'node_type': Node.ELEMENT_NODE, 'node_name': u'h2'}),
-            ('delete', [0, 0], {'node_type': Node.TEXT_NODE, 'node_value': u'one'}),
-            ('delete', [0], {'node_type': Node.ELEMENT_NODE, 'node_name': u'h1'}),
-            ('insert', [0], {'node_type': Node.ELEMENT_NODE, 'node_name': u'h3'}),
-            ('insert', [0, 0], {'node_type': Node.TEXT_NODE, 'node_value': u'three'}),
-            ('insert', [1], {'node_type': Node.ELEMENT_NODE, 'node_name': u'h4'}),
-            ('insert', [1, 0], {'node_type': Node.TEXT_NODE, 'node_value': u'four'}),
+            ('delete', [1, 0], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'two',
+            }),
+            ('delete', [1], {
+                'node_type': Node.ELEMENT_NODE,
+                'node_name': u'h2',
+            }),
+            ('delete', [0, 0], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'one',
+            }),
+            ('delete', [0], {
+                'node_type': Node.ELEMENT_NODE,
+                'node_name': u'h1',
+            }),
+            ('insert', [0], {
+                'node_type': Node.ELEMENT_NODE,
+                'node_name': u'h3',
+            }),
+            ('insert', [0, 0], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'three',
+            }),
+            ('insert', [1], {
+                'node_type': Node.ELEMENT_NODE,
+                'node_name': u'h4',
+            }),
+            ('insert', [1, 0], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'four',
+            }),
         ]
     ),
     (
         'multiple node replace with extra text',
         '<div>before<h1>one</h1><h2>two</h2>after</div>',
         '<div>before<h3>three</h3><h4>four</h4>after</div>',
-        '<div>before<del><h1>one</h1><h2>two</h2></del><ins><h3>three</h3><h4>four</h4></ins>after</div>',
+        '<div>before<del><h1>one</h1><h2>two</h2></del><ins><h3>three</h3><h4>four</h4></ins>after</div>',  # noqa
         [
-            ('delete', [0, 2, 0], {'node_type': Node.TEXT_NODE, 'node_value': u'two'}),
-            ('delete', [0, 2], {'node_type': Node.ELEMENT_NODE, 'node_name': u'h2'}),
-            ('delete', [0, 1, 0], {'node_type': Node.TEXT_NODE, 'node_value': u'one'}),
-            ('delete', [0, 1], {'node_type': Node.ELEMENT_NODE, 'node_name': u'h1'}),
-            ('insert', [0, 1], {'node_type': Node.ELEMENT_NODE, 'node_name': u'h3'}),
-            ('insert', [0, 1, 0], {'node_type': Node.TEXT_NODE, 'node_value': u'three'}),
-            ('insert', [0, 2], {'node_type': Node.ELEMENT_NODE, 'node_name': u'h4'}),
-            ('insert', [0, 2, 0], {'node_type': Node.TEXT_NODE, 'node_value': u'four'}),
+            ('delete', [0, 2, 0], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'two',
+            }),
+            ('delete', [0, 2], {
+                'node_type': Node.ELEMENT_NODE,
+                'node_name': u'h2',
+            }),
+            ('delete', [0, 1, 0], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'one',
+            }),
+            ('delete', [0, 1], {
+                'node_type': Node.ELEMENT_NODE,
+                'node_name': u'h1',
+            }),
+            ('insert', [0, 1], {
+                'node_type': Node.ELEMENT_NODE,
+                'node_name': u'h3',
+            }),
+            ('insert', [0, 1, 0], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'three',
+            }),
+            ('insert', [0, 2], {
+                'node_type': Node.ELEMENT_NODE,
+                'node_name': u'h4',
+            }),
+            ('insert', [0, 2, 0], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'four',
+            }),
         ]
     ),
     (
         'multiple node replace with filler in between',
         '<h1>one</h1>filler<h2>two</h2>',
         '<h3>three</h3>filler<h4>four</h4>',
-        '<del><h1>one</h1></del><ins><h3>three</h3></ins>filler<del><h2>two</h2></del><ins><h4>four</h4></ins>',
+        '<del><h1>one</h1></del><ins><h3>three</h3></ins>filler<del><h2>two</h2></del><ins><h4>four</h4></ins>',  # noqa
         [
-            ('delete', [0, 0], {'node_type': Node.TEXT_NODE, 'node_value': u'one'}),
-            ('delete', [0], {'node_type': Node.ELEMENT_NODE, 'node_name': u'h1'}),
-            ('insert', [0], {'node_type': Node.ELEMENT_NODE, 'node_name': u'h3'}),
-            ('insert', [0, 0], {'node_type': Node.TEXT_NODE, 'node_value': u'three'}),
-            ('delete', [2, 0], {'node_type': Node.TEXT_NODE, 'node_value': u'two'}),
-            ('delete', [2], {'node_type': Node.ELEMENT_NODE, 'node_name': u'h2'}),
-            ('insert', [2], {'node_type': Node.ELEMENT_NODE, 'node_name': u'h4'}),
-            ('insert', [2, 0], {'node_type': Node.TEXT_NODE, 'node_value': u'four'}),
+            ('delete', [0, 0], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'one',
+            }),
+            ('delete', [0], {
+                'node_type': Node.ELEMENT_NODE,
+                'node_name': u'h1',
+            }),
+            ('insert', [0], {
+                'node_type': Node.ELEMENT_NODE,
+                'node_name': u'h3',
+            }),
+            ('insert', [0, 0], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'three',
+            }),
+            ('delete', [2, 0], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'two',
+            }),
+            ('delete', [2], {
+                'node_type': Node.ELEMENT_NODE,
+                'node_name': u'h2',
+            }),
+            ('insert', [2], {
+                'node_type': Node.ELEMENT_NODE,
+                'node_name': u'h4',
+            }),
+            ('insert', [2, 0], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'four',
+            }),
         ]
     ),
     (
@@ -225,9 +388,18 @@ test_cases = [ # test case = (old html, new html, inline changes, edit script)
         '<h2><em>xxx</em></h2><h1><em>xxx</em></h1>',
         '<ins><h2><em>xxx</em></h2></ins><h1><em>xxx</em></h1>',
         [
-            ('insert', [0], {'node_type': Node.ELEMENT_NODE, 'node_name': u'h2'}),
-            ('insert', [0, 0], {'node_type': Node.ELEMENT_NODE, 'node_name': u'em'}),
-            ('insert', [0, 0, 0], {'node_type': Node.TEXT_NODE, 'node_value': u'xxx'}),
+            ('insert', [0], {
+                'node_type': Node.ELEMENT_NODE,
+                'node_name': u'h2',
+            }),
+            ('insert', [0, 0], {
+                'node_type': Node.ELEMENT_NODE,
+                'node_name': u'em',
+            }),
+            ('insert', [0, 0, 0], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'xxx',
+            }),
         ]
     ),
     (
@@ -236,8 +408,14 @@ test_cases = [ # test case = (old html, new html, inline changes, edit script)
         '<div><h1>one</h1><h2>two</h2></div>',
         '<div><h1>one</h1><ins><h2>two</h2></ins></div>',
         [
-            ('insert', [0, 1], {'node_type': Node.ELEMENT_NODE, 'node_name': u'h2'}),
-            ('insert', [0, 1, 0], {'node_type': Node.TEXT_NODE, 'node_value': u'two'}),
+            ('insert', [0, 1], {
+                'node_type': Node.ELEMENT_NODE,
+                'node_name': u'h2',
+            }),
+            ('insert', [0, 1, 0], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'two',
+            }),
         ]
     ),
     (
@@ -246,7 +424,10 @@ test_cases = [ # test case = (old html, new html, inline changes, edit script)
         '<h1>one</h1>test<h2>two</h2>',
         '<h1>one</h1><ins>test</ins><h2>two</h2>',
         [
-            ('insert', [1], {'node_type': Node.TEXT_NODE, 'node_value': u'test'}),
+            ('insert', [1], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'test',
+            }),
         ]
     ),
     (
@@ -255,8 +436,14 @@ test_cases = [ # test case = (old html, new html, inline changes, edit script)
         '<h1>... new ...</h1>',
         '<h1>... <del>old</del><ins>new</ins> ...</h1>',
         [
-            ('delete', [0, 4], {'node_type': Node.TEXT_NODE, 'node_value': u'old'}),
-            ('insert', [0, 4], {'node_type': Node.TEXT_NODE, 'node_value': u'new'}),
+            ('delete', [0, 4], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'old',
+            }),
+            ('insert', [0, 4], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'new',
+            }),
         ]
     ),
     (
@@ -265,10 +452,22 @@ test_cases = [ # test case = (old html, new html, inline changes, edit script)
         '<h1>new</h1>',
         '<del><h1>old</h1></del><ins><h1>new</h1></ins>',
         [
-            ('delete', [0, 0], {'node_type': Node.TEXT_NODE, 'node_value': u'old'}),
-            ('delete', [0], {'node_type': Node.ELEMENT_NODE, 'node_name': u'h1'}),
-            ('insert', [0], {'node_type': Node.ELEMENT_NODE, 'node_name': u'h1'}),
-            ('insert', [0, 0], {'node_type': Node.TEXT_NODE, 'node_value': u'new'}),
+            ('delete', [0, 0], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'old',
+            }),
+            ('delete', [0], {
+                'node_type': Node.ELEMENT_NODE,
+                'node_name': u'h1',
+            }),
+            ('insert', [0], {
+                'node_type': Node.ELEMENT_NODE,
+                'node_name': u'h1',
+            }),
+            ('insert', [0, 0], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'new',
+            }),
         ]
     ),
     (
@@ -277,8 +476,14 @@ test_cases = [ # test case = (old html, new html, inline changes, edit script)
         '<h1>red blue</h1>',
         '<h1><ins>red </ins>blue</h1>',
         [
-            ('insert', [0, 0], {'node_type': Node.TEXT_NODE, 'node_value': u'red'}),
-            ('insert', [0, 1], {'node_type': Node.TEXT_NODE, 'node_value': u' '}),
+            ('insert', [0, 0], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'red',
+            }),
+            ('insert', [0, 1], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u' ',
+            }),
         ]
     ),
     (
@@ -287,8 +492,14 @@ test_cases = [ # test case = (old html, new html, inline changes, edit script)
         '<h1>red green blue</h1>',
         '<h1>red <ins>green </ins>blue</h1>',
         [
-            ('insert', [0, 2], {'node_type': Node.TEXT_NODE, 'node_value': u'green'}),
-            ('insert', [0, 3], {'node_type': Node.TEXT_NODE, 'node_value': u' '}),
+            ('insert', [0, 2], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'green',
+            }),
+            ('insert', [0, 3], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u' ',
+            }),
         ]
     ),
     (
@@ -297,10 +508,22 @@ test_cases = [ # test case = (old html, new html, inline changes, edit script)
         '<h1>test alot of stuff</h1>',
         '<h1>test <del>some</del><ins>alot of</ins> stuff</h1>',
         [
-            ('delete', [0, 2], {'node_type': Node.TEXT_NODE, 'node_value': u'some'}),
-            ('insert', [0, 2], {'node_type': Node.TEXT_NODE, 'node_value': u'alot'}),
-            ('insert', [0, 3], {'node_type': Node.TEXT_NODE, 'node_value': u' '}),
-            ('insert', [0, 4], {'node_type': Node.TEXT_NODE, 'node_value': u'of'}),
+            ('delete', [0, 2], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'some',
+            }),
+            ('insert', [0, 2], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'alot',
+            }),
+            ('insert', [0, 3], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u' ',
+            }),
+            ('insert', [0, 4], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'of',
+            }),
         ]
     ),
     (
@@ -310,7 +533,10 @@ test_cases = [ # test case = (old html, new html, inline changes, edit script)
         '<h1>test</h1><ins> tail</ins>',
         [
             ('insert', [1], {'node_type': Node.TEXT_NODE, 'node_value': u' '}),
-            ('insert', [2], {'node_type': Node.TEXT_NODE, 'node_value': u'tail'}),
+            ('insert', [2], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'tail',
+            }),
         ]
     ),
     (
@@ -319,8 +545,14 @@ test_cases = [ # test case = (old html, new html, inline changes, edit script)
         '<h1>test</h1>banana',
         '<h1>test</h1><del>apple</del><ins>banana</ins>',
         [
-            ('delete', [1], {'node_type': Node.TEXT_NODE, 'node_value': u'apple'}),
-            ('insert', [1], {'node_type': Node.TEXT_NODE, 'node_value': u'banana'}),
+            ('delete', [1], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'apple',
+            }),
+            ('insert', [1], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'banana',
+            }),
         ]
     ),
     (
@@ -329,7 +561,10 @@ test_cases = [ # test case = (old html, new html, inline changes, edit script)
         '<h1>one</h1>filler<h2>two</h2>',
         '<h1>one</h1><ins>filler</ins><h2>two</h2>',
         [
-            ('insert', [1], {'node_type': Node.TEXT_NODE, 'node_value': u'filler'}),
+            ('insert', [1], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'filler',
+            }),
         ]
     ),
     (
@@ -338,10 +573,22 @@ test_cases = [ # test case = (old html, new html, inline changes, edit script)
         '<h2>test</h2>',
         '<del><h1>test</h1></del><ins><h2>test</h2></ins>',
         [
-            ('delete', [0, 0], {'node_type': Node.TEXT_NODE, 'node_value': u'test'}),
-            ('delete', [0], {'node_type': Node.ELEMENT_NODE, 'node_name': u'h1'}),
-            ('insert', [0], {'node_type': Node.ELEMENT_NODE, 'node_name': u'h2'}),
-            ('insert', [0, 0], {'node_type': Node.TEXT_NODE, 'node_value': u'test'}),
+            ('delete', [0, 0], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'test',
+            }),
+            ('delete', [0], {
+                'node_type': Node.ELEMENT_NODE,
+                'node_name': u'h1',
+            }),
+            ('insert', [0], {
+                'node_type': Node.ELEMENT_NODE,
+                'node_name': u'h2',
+            }),
+            ('insert', [0, 0], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'test',
+            }),
         ]
     ),
     (
@@ -350,21 +597,27 @@ test_cases = [ # test case = (old html, new html, inline changes, edit script)
         '<h2>test</h2><h1>test</h1>',
         '<ins><h2>test</h2></ins><h1>test</h1>',
         [
-            ('insert', [0], {'node_type': Node.ELEMENT_NODE, 'node_name': u'h2'}),
-            ('insert', [0, 0], {'node_type': Node.TEXT_NODE, 'node_value': u'test'}),
+            ('insert', [0], {
+                'node_type': Node.ELEMENT_NODE,
+                'node_name': u'h2',
+            }),
+            ('insert', [0, 0], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'test',
+            }),
         ]
     ),
     (
         'complex text change',
         '<h1>The quick brown fox jumps over the lazy dog</h1>',
         '<h1>The very quick red fox jumps over the dog again</h1>',
-        '<h1>The<ins> very</ins> quick <del>brown</del><ins>red</ins> fox jumps over the <del>lazy </del>dog<ins> again</ins></h1>',
+        '<h1>The<ins> very</ins> quick <del>brown</del><ins>red</ins> fox jumps over the <del>lazy </del>dog<ins> again</ins></h1>',  # noqa
     ),
     (
         'sub-word-boundary text change',
         '<h1>The quick brown fox jumps over the lazy dog</h1>',
         '<h1>The very quick brown foxes jump over the dog</h1>',
-        '<h1>The<ins> very</ins> quick brown <del>fox jumps</del><ins>foxes jump</ins> over the <del>lazy </del>dog</h1>',
+        '<h1>The<ins> very</ins> quick brown <del>fox jumps</del><ins>foxes jump</ins> over the <del>lazy </del>dog</h1>',  # noqa
     ),
     (
         'insert markup with text before a text section',
@@ -388,7 +641,7 @@ test_cases = [ # test case = (old html, new html, inline changes, edit script)
         'insert multiple markup in a changing text section',
         '<h1>... red yellow</h1>',
         '<h1>... orange red <em>green</em><b>blue</b> yellow white</h1>',
-        '<h1>... <ins>orange </ins>red <ins><em>green</em><b>blue</b> </ins>yellow<ins> white</ins></h1>',
+        '<h1>... <ins>orange </ins>red <ins><em>green</em><b>blue</b> </ins>yellow<ins> white</ins></h1>',  # noqa
     ),
     (
         'add markup around a text section',
@@ -406,31 +659,31 @@ test_cases = [ # test case = (old html, new html, inline changes, edit script)
         'change markup and make complex text changes together',
         '<h1>The quick brown fox jumps over the lazy dog</h1>',
         '<h1>The very quick <b>brown</b> foxes jump over the dog</h1>',
-        '<h1>The<ins> very</ins> quick <del>brown fox jumps</del><ins><b>brown</b> foxes jump</ins> over the <del>lazy </del>dog</h1>',
+        '<h1>The<ins> very</ins> quick <del>brown fox jumps</del><ins><b>brown</b> foxes jump</ins> over the <del>lazy </del>dog</h1>',  # noqa
     ),
     (
         'change markup and text together',
         '<h1>red <em>green</em> blue yellow</h1>',
         '<h1>red green <b>blue</b> yellow</h1>',
-        '<h1>red <del><em>green</em> blue</del><ins>green <b>blue</b></ins> yellow</h1>',
+        '<h1>red <del><em>green</em> blue</del><ins>green <b>blue</b></ins> yellow</h1>',  # noqa
     ),
     (
         'separate text and markup changes',
         '<h1>... red blue</h1><h2>two</h2>',
         '<h1>... reds blue yellow</h1><h2><b>two</b></h2>',
-        '<h1>... <del>red</del><ins>reds</ins> blue<ins> yellow</ins></h1><h2><del>two</del><ins><b>two</b></ins></h2>',
+        '<h1>... <del>red</del><ins>reds</ins> blue<ins> yellow</ins></h1><h2><del>two</del><ins><b>two</b></ins></h2>',  # noqa
     ),
     (
         'text changes before, inside, and after a block tag',
         '<h1>red <div>green</div> blue yellow</h1>',
         '<h1>red orange <div>purple</div> yellow</h1>',
-        '<h1>red <del><div>green</div> blue</del><ins>orange <div>purple</div></ins> yellow</h1>',
+        '<h1>red <del><div>green</div> blue</del><ins>orange <div>purple</div></ins> yellow</h1>',  # noqa
     ),
     (
         'change markup inside text change',
         '<div>one <div>two</div> three</div>',
-        '<div>almostone, one and a half, <div>almost <em>two</em></div> three four</div>',
-        '<div><ins>almostone, </ins>one <ins>and a half, </ins><div><del>two</del><ins>almost <em>two</em></ins></div> three<ins> four</ins></div>',
+        '<div>almostone, one and a half, <div>almost <em>two</em></div> three four</div>',  # noqa
+        '<div><ins>almostone, </ins>one <ins>and a half, </ins><div><del>two</del><ins>almost <em>two</em></ins></div> three<ins> four</ins></div>',  # noqa
     ),
     (
         "ensure that &nbsp; doesn't mess up text diff",
@@ -444,8 +697,14 @@ test_cases = [ # test case = (old html, new html, inline changes, edit script)
         u'<h1>über ......</h1>',
         u'<h1><del>uber</del><ins>über</ins> ......</h1>',
         [
-            ('delete', [0, 0], {'node_type': Node.TEXT_NODE, 'node_value': u'uber'}),
-            ('insert', [0, 0], {'node_type': Node.TEXT_NODE, 'node_value': u'über'}),
+            ('delete', [0, 0], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'uber',
+            }),
+            ('insert', [0, 0], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'über',
+            }),
         ]
     ),
     (
@@ -458,38 +717,50 @@ test_cases = [ # test case = (old html, new html, inline changes, edit script)
         'crossing node and tree matches',
         '<h1>xxx</h1><h1>YYY</h1><h1>YYY</h1><h2>xxx</h2>',
         '<h2>xxx</h2><h1>YYY</h1><h1>YYY</h1><h1>xxx</h1>',
-        '<del><h1>xxx</h1></del><ins><h2>xxx</h2></ins><h1>YYY</h1><h1>YYY</h1><del><h2>xxx</h2></del><ins><h1>xxx</h1></ins>',
+        '<del><h1>xxx</h1></del><ins><h2>xxx</h2></ins><h1>YYY</h1><h1>YYY</h1><del><h2>xxx</h2></del><ins><h1>xxx</h1></ins>',  # noqa
     ),
     (
         'index in lower levels being affected by changes in upper levels',
         '<p><em>zzz</em> ...</p>',
         '<h1>xxx</h1><p>yyy ...</p>',
-        '<ins><h1>xxx</h1></ins><p><del><em>zzz</em></del><ins>yyy</ins> ...</p>',
+        '<ins><h1>xxx</h1></ins><p><del><em>zzz</em></del><ins>yyy</ins> ...</p>',  # noqa
         [
-            ('insert', [0], {'node_type': Node.ELEMENT_NODE, 'node_name': u'h1'}),
-            ('insert', [0, 0], {'node_type': Node.TEXT_NODE, 'node_value': u'xxx'}),
+            ('insert', [0], {
+                'node_type': Node.ELEMENT_NODE,
+                'node_name': u'h1',
+            }),
+            ('insert', [0, 0], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'xxx',
+            }),
             ('delete', [1, 0, 0], {'node_value': u'zzz', 'node_type': 3}),
-            ('delete', [1, 0], {'node_type': Node.ELEMENT_NODE, 'node_name': u'em'}),
-            ('insert', [1, 0], {'node_type': Node.TEXT_NODE, 'node_value': u'yyy'}),
+            ('delete', [1, 0], {
+                'node_type': Node.ELEMENT_NODE,
+                'node_name': u'em',
+            }),
+            ('insert', [1, 0], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'yyy',
+            }),
         ]
     ),
     (
         'near match should override tag-only match',
         '<p>delete this</p><p>make a small change in this paragraph</p>',
         '<p>a small change was made in this paragraph</p>',
-        '<del><p>delete this</p></del><p><del>make </del>a small change <ins>was made </ins>in this paragraph</p>',
+        '<del><p>delete this</p></del><p><del>make </del>a small change <ins>was made </ins>in this paragraph</p>',  # noqa
     ),
     (
         "don't match when similarity is very low",
         '<p>The quick brown fox jumps over the lazy dog</p>',
         '<p>This sentence has nothing to do with the previous one</p>',
-        '<del><p>The quick brown fox jumps over the lazy dog</p></del><ins><p>This sentence has nothing to do with the previous one</p></ins>',
+        '<del><p>The quick brown fox jumps over the lazy dog</p></del><ins><p>This sentence has nothing to do with the previous one</p></ins>',  # noqa
     ),
     (
         'another similarity test',
-        '<p>Pass the end of the string under the ring, using the hemostat if necessary.</p>',
-        '<p>Take the long end, which is toward the finger, and start wrapping around the finger, starting right against the distal side of the ring, wrapping one wrap after another, continuously, until all the remaining string is used (wrapped around the finger), or until the wraps go at least to, or past the midpoint of the first knuckle.</p>',
-        '<del><p>Pass the end of the string under the ring, using the hemostat if necessary.</p></del><ins><p>Take the long end, which is toward the finger, and start wrapping around the finger, starting right against the distal side of the ring, wrapping one wrap after another, continuously, until all the remaining string is used (wrapped around the finger), or until the wraps go at least to, or past the midpoint of the first knuckle.</p></ins>',
+        '<p>Pass the end of the string under the ring, using the hemostat if necessary.</p>',  # noqa
+        '<p>Take the long end, which is toward the finger, and start wrapping around the finger, starting right against the distal side of the ring, wrapping one wrap after another, continuously, until all the remaining string is used (wrapped around the finger), or until the wraps go at least to, or past the midpoint of the first knuckle.</p>',  # noqa
+        '<del><p>Pass the end of the string under the ring, using the hemostat if necessary.</p></del><ins><p>Take the long end, which is toward the finger, and start wrapping around the finger, starting right against the distal side of the ring, wrapping one wrap after another, continuously, until all the remaining string is used (wrapped around the finger), or until the wraps go at least to, or past the midpoint of the first knuckle.</p></ins>',  # noqa
     ),
     (
         'changes inside table cells work normally',
@@ -525,14 +796,164 @@ test_cases = [ # test case = (old html, new html, inline changes, edit script)
     (
         'do not sync up on stopwords',
         'at least one foot is touching the ground outside the threshold.',
-        'at least one foot is <strong>touching the ground</strong> outside the threshold.',
-        'at least one foot is <del>touching the ground</del><ins><strong>touching the ground</strong></ins> outside the threshold.',
+        'at least one foot is <strong>touching the ground</strong> outside the threshold.',  # noqa
+        'at least one foot is <del>touching the ground</del><ins><strong>touching the ground</strong></ins> outside the threshold.',  # noqa
     ),
     (
         'text similarity on long passages',
-        '''<p>A selenium test is a tool with which to test javascript applications.&#160; As long as the tester has access to an xpath, or an id or even a name, it is possible to latch onto a web page (that contains javascript) and 'click' buttons or send keys to text fields or even toggle check boxes.&#160; Without selenium, or a tool similar to selenium, it would be almost impossible to automate the testing of javascript applications.</p>''',
-        '''<p><a href="http://seleniumhq.org/">Selenium</a>&#160;is a tool used to run automated tests using real web browsers. By writing code, a developer is able to ensure that a web application consistently behaves as expected in a real browser environment, with all of the browser-specific quirks.</p><p>A selenium test is a tool with which to test web applications, with an eye towards javascript-intensive applications.&#160; Selenium tests make it possible to latch onto a web page (that contains javascript) and 'click' buttons or send keys to text fields or even toggle check boxes.&#160; Without selenium, or a tool similar to selenium, it would be almost impossible to automate the testing of javascript applications using a real web browser.</p>''',
-        '''<ins><p><a href="http://seleniumhq.org/">Selenium</a> is a tool used to run automated tests using real web browsers. By writing code, a developer is able to ensure that a web application consistently behaves as expected in a real browser environment, with all of the browser-specific quirks.</p></ins><p>A selenium test is a tool with which to test <ins>web applications, with an eye towards </ins>javascript<ins>-intensive</ins> applications. <del>As long as the tester has access to an xpath, or an id or even a name, it is</del><ins>Selenium tests make it</ins> possible to latch onto a web page (that contains javascript) and 'click' buttons or send keys to text fields or even toggle check boxes. Without selenium, or a tool similar to selenium, it would be almost impossible to automate the testing of javascript applications<ins> using a real web browser</ins>.</p>'''
+        '''<p>A selenium test is a tool with which to test javascript applications.&#160; As long as the tester has access to an xpath, or an id or even a name, it is possible to latch onto a web page (that contains javascript) and 'click' buttons or send keys to text fields or even toggle check boxes.&#160; Without selenium, or a tool similar to selenium, it would be almost impossible to automate the testing of javascript applications.</p>''',  # noqa
+        '''<p><a href="http://seleniumhq.org/">Selenium</a>&#160;is a tool used to run automated tests using real web browsers. By writing code, a developer is able to ensure that a web application consistently behaves as expected in a real browser environment, with all of the browser-specific quirks.</p><p>A selenium test is a tool with which to test web applications, with an eye towards javascript-intensive applications.&#160; Selenium tests make it possible to latch onto a web page (that contains javascript) and 'click' buttons or send keys to text fields or even toggle check boxes.&#160; Without selenium, or a tool similar to selenium, it would be almost impossible to automate the testing of javascript applications using a real web browser.</p>''',  # noqa
+        '''<ins><p><a href="http://seleniumhq.org/">Selenium</a> is a tool used to run automated tests using real web browsers. By writing code, a developer is able to ensure that a web application consistently behaves as expected in a real browser environment, with all of the browser-specific quirks.</p></ins><p>A selenium test is a tool with which to test <ins>web applications, with an eye towards </ins>javascript<ins>-intensive</ins> applications. <del>As long as the tester has access to an xpath, or an id or even a name, it is</del><ins>Selenium tests make it</ins> possible to latch onto a web page (that contains javascript) and 'click' buttons or send keys to text fields or even toggle check boxes. Without selenium, or a tool similar to selenium, it would be almost impossible to automate the testing of javascript applications<ins> using a real web browser</ins>.</p>'''  # noqa
+    ),
+    (
+        'test changed orphaned text node in ol',
+        '<ol><li>AAA</li>BBB<li>CCC</li></ol>',
+        '<ol><li>AAA</li>ZZZ<li>CCC</li></ol>',
+        '<ol><li>AAA</li><del>BBB</del><ins>ZZZ</ins><li>CCC</li></ol>',
+        [
+            ('delete', [0, 1], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'BBB',
+            }),
+            ('insert', [0, 1], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'ZZZ',
+            }),
+        ]
+    ),
+    (
+        'TD content change does not show TD removal',
+        '''
+        <table>
+            <tbody>
+                <tr>
+                    <td>AAA</td>
+                    <td>BBB</td>
+                </tr>
+            </tbody>
+        </table>
+        ''',
+        collapse('''
+        <table>
+            <tbody>
+                <tr>
+                    <td>ZZZ</td>
+                    <td>BBB</td>
+                </tr>
+            </tbody>
+        </table>
+        '''),
+        collapse('''
+        <table>
+            <tbody>
+                <tr>
+                    <td><del>AAA</del><ins>ZZZ</ins></td>
+                    <td>BBB</td>
+                </tr>
+            </tbody>
+        </table>
+        '''),
+        [  # The result of this will be fixed by fix_tables
+            ('delete', [0, 0, 0, 0, 0], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'AAA',
+            }),
+            ('delete', [0, 0, 0, 0], {
+                'node_type': Node.ELEMENT_NODE,
+                'node_name': u'td',
+            }),
+            ('insert', [0, 0, 0, 0], {
+                'node_type': Node.ELEMENT_NODE,
+                'node_name': u'td',
+            }),
+            ('insert', [0, 0, 0, 0, 0], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'ZZZ',
+            }),
+        ],
+    ),
+    (
+        'LI content change does not show LI removal',
+        '''
+        <ol>
+            <li>AAA</li>
+            <li>BBB</li>
+        </ol>
+        ''',
+        collapse('''
+        <ol>
+            <li>ZZZ</li>
+            <li>BBB</li>
+        </ol>
+        '''),
+        collapse('''
+        <ol>
+            <li><del>AAA</del><ins>ZZZ</ins></li>
+            <li>BBB</li>
+        </ol>
+        '''),
+        [  # The result of this will be fixed by fix_lists
+            ('delete', [0, 0, 0], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'AAA',
+            }),
+            ('delete', [0, 0], {
+                'node_type': Node.ELEMENT_NODE,
+                'node_name': u'li',
+            }),
+            ('insert', [0, 0], {
+                'node_type': Node.ELEMENT_NODE,
+                'node_name': u'li',
+            }),
+            ('insert', [0, 0, 0], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'ZZZ',
+            }),
+        ],
+    ),
+    (
+        'Nested LI content change does not show LI removal',
+        collapse('''
+        <ol>
+            <li>AAA<ol>
+                    <li>BBB</li>
+                    <li>CCC</li>
+                </ol>
+            </li>
+            <li>DDD</li>
+        </ol>
+        '''),
+        collapse('''
+        <ol>
+            <li>ZZZ<ol>
+                    <li>BBB</li>
+                    <li>CCC</li>
+                </ol>
+            </li>
+            <li>DDD</li>
+        </ol>
+        '''),
+        collapse('''
+        <ol>
+            <li><del>AAA</del><ins>ZZZ</ins>
+                <ol>
+                    <li>BBB</li>
+                    <li>CCC</li>
+                </ol>
+            </li>
+            <li>DDD</li>
+        </ol>
+        '''),
+        [
+            ('delete', [0, 0, 0], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'AAA',
+            }),
+            ('insert', [0, 0, 0], {
+                'node_type': Node.TEXT_NODE,
+                'node_value': u'ZZZ',
+            }),
+        ],
     ),
 ]
 
@@ -548,7 +969,7 @@ one_way_test_cases = [
         'switch places, near match',
         '<h1>one one</h1><h2>two two</h2>',
         '<h2>two two x</h2><h1>one one yyy</h1>',
-        '<ins><h2>two two x</h2></ins><h1>one one<ins> yyy</ins></h1><del><h2>two two</h2></del>',
+        '<ins><h2>two two x</h2></ins><h1>one one<ins> yyy</ins></h1><del><h2>two two</h2></del>',  # noqa
     ),
 ]
 
@@ -569,14 +990,14 @@ insane_test_cases = [
     (
         'add table rows and cells, to the bottom and right',
         '<table><tr><td>... A</td></tr></table>',
-        '<table><tr><td>... A</td><td>B</td></tr><tr><td>C</td><td>D</td></tr></table>',
-        '<table><tr><td>... A</td><td><ins>B</ins></td></tr><tr><td><ins>C</ins></td><td><ins>D</ins></td></tr></table>',
+        '<table><tr><td>... A</td><td>B</td></tr><tr><td>C</td><td>D</td></tr></table>',  # noqa
+        '<table><tr><td>... A</td><td><ins>B</ins></td></tr><tr><td><ins>C</ins></td><td><ins>D</ins></td></tr></table>',  # noqa
     ),
     (
         'add table rows and cells, to the up and left',
         '<table><tr><td>... D</td></tr></table>',
-        '<table><tr><td>A</td><td>B</td></tr><tr><td>C</td><td>... D</td></tr></table>',
-        '<table><tr><td><ins>A</ins></td><td><ins>B</ins></td></tr><tr><td><ins>C</ins></td><td>... D</td></tr></table>',
+        '<table><tr><td>A</td><td>B</td></tr><tr><td>C</td><td>... D</td></tr></table>',  # noqa
+        '<table><tr><td><ins>A</ins></td><td><ins>B</ins></td></tr><tr><td><ins>C</ins></td><td>... D</td></tr></table>',  # noqa
     ),
     (
         'delete a table cell',
@@ -594,7 +1015,7 @@ insane_test_cases = [
         'delete top row and add a column',
         '<table><tr><td>A1</td></tr><tr><td>... B1</td></tr></table>',
         '<table><tr><td>... B1</td><td>B2</td></tr></table>',
-        '<table><tr><td><del>A1</del></td></tr><tr><td>... B1</td><td><ins>B2</ins></td></tr></table>',
+        '<table><tr><td><del>A1</del></td></tr><tr><td>... B1</td><td><ins>B2</ins></td></tr></table>',  # noqa
     ),
     (
         'delete top row and add a column, funny whitespace',
@@ -695,23 +1116,79 @@ insane_test_cases = [
         </table>
         '''),
     ),
-#BROKEN, see issue #2384
-#    # ul and ol tags are considered equal when diffing
-#    (
-#        '<ul><li>X</li></ul>',
-#        '<ol><li>X</li></ol>',
-#        '<ol><li>X</li></ol>',
-#    ),
-#    (
-#        '<ol><li>X</li></ol>',
-#        '<ul><li>X</li></ul>',
-#        '<ul><li>X</li></ul>',
-#    ),
+    # BROKEN, see issue #2384
+    # # ul and ol tags are considered equal when diffing
+    # (
+    # '<ul><li>X</li></ul>',
+    # '<ol><li>X</li></ol>',
+    # '<ol><li>X</li></ol>',
+    # ),
+    # (
+    # '<ol><li>X</li></ol>',
+    # '<ul><li>X</li></ul>',
+    # '<ul><li>X</li></ul>',
+    # ),
+    (
+        'LI full content change keeps attrs',
+        collapse('''
+        <ol>
+            <li id="foo" class="old">AAA</li>
+            <li>BBB</li>
+        </ol>
+        '''),
+        collapse('''
+        <ol>
+            <li class="new">ZZZ</li>
+            <li>BBB</li>
+        </ol>
+        '''),
+        collapse('''
+        <ol>
+            <li class="new"><del>AAA</del><ins>ZZZ</ins></li>
+            <li>BBB</li>
+        </ol>
+        '''),
+    ),
+    (
+        'TD content change does not show TD removal with THs',
+        collapse('''
+        <table>
+            <tbody>
+                <tr>
+                    <td>AAA</td>
+                    <td>BBB</td>
+                </tr>
+            </tbody>
+        </table>
+        '''),
+        collapse('''
+        <table>
+            <tbody>
+                <tr>
+                    <th>ZZZ</th>
+                    <td>BBB</td>
+                </tr>
+            </tbody>
+        </table>
+        '''),
+        collapse('''
+        <table>
+            <tbody>
+                <tr>
+                    <th><del>AAA</del><ins>ZZZ</ins></th>
+                    <td>BBB</td>
+                </tr>
+            </tbody>
+        </table>
+        '''),
+    ),
 ]
 
 # Assemble test cases
 # add reverse test cases
 # switch the old and new html, and reverse the changes
+
+
 def reverse_cases(cases):
     for case in parse_cases(cases):
         yield (
@@ -729,17 +1206,29 @@ all_test_cases = (test_cases +
                   one_way_test_cases +
                   insane_test_cases)
 
+
 def assert_html_equal(a_html, b_html):
     assert html_equal(a_html, b_html), (
-        u'These html documents are not equal:\n%r\n====\n%r' % (a_html, b_html))
+        u'These html documents are not equal:\n%r\n====\n%r' % (
+            a_html,
+            b_html,
+        )
+    )
+
 
 def assert_html_not_equal(a_html, b_html):
     assert not html_equal(a_html, b_html), (
-        u'These html documents should not be equal:\n%r\n====\n%r' % (a_html, b_html))
+        u'These html documents should not be equal:\n%r\n====\n%r' % (
+            a_html,
+            b_html,
+        )
+    )
+
 
 def assert_strip_changes(old_html, new_html, changes):
     assert_html_equal(old_html, strip_changes_old(changes))
     assert_html_equal(new_html, strip_changes_new(changes))
+
 
 def test_parse_comments():
     assert_html_equal(
@@ -755,6 +1244,7 @@ def test_parse_comments():
         '<p>stuffstuff</p>',
     )
 
+
 def test_parse_text():
     text = 'test one two < & > ;'
     dom = parse_text(text)
@@ -763,6 +1253,7 @@ def test_parse_text():
     child = root.childNodes[0]
     assert is_text(child)
     assert child.nodeValue == text
+
 
 def test_html_equal():
     html_equal_cases = [
@@ -784,6 +1275,7 @@ def test_html_equal():
     for a_html, b_html in html_equal_cases:
         assert_html_equal(a_html, b_html)
 
+
 def test_html_not_equal():
     html_not_equal_cases = [
         ('<h1>test</h1>',
@@ -802,6 +1294,7 @@ def test_html_not_equal():
     for a_html, b_html in html_not_equal_cases:
         assert_html_not_equal(a_html, b_html)
 
+
 def test_remove_attributes():
     remove_attributes_cases = [
         ('<h1>one</h1>',
@@ -810,7 +1303,7 @@ def test_remove_attributes():
          '<h1>one</h1>'),
         ('<h1 id="test-heading" class="test">one</h1>',
          '<h1>one</h1>'),
-        ('<div>before <h1 id="test-heading" class="test">one</h1> after </div>',
+        ('<div>before <h1 id="test-heading" class="test">one</h1> after </div>',  # noqa
          '<div>before <h1>one</h1> after </div>'),
         (u'<h1 class="test">über</h1>',
          u'<h1>über</h1>'),
@@ -818,11 +1311,13 @@ def test_remove_attributes():
     for html, stripped_html, in remove_attributes_cases:
         assert_html_equal(remove_attributes(html), stripped_html)
 
+
 def test_edit_script():
     # edit script output does not reverse easily, don't test the reverse cases
     for case in parse_cases(test_cases + one_way_test_cases):
         if not case.edit_script:
             continue
+
         def test():
             actual_edit_script = get_edit_script(case.old_html, case.new_html)
             assert_equal(
@@ -833,6 +1328,7 @@ def test_edit_script():
             )
         test.description = 'test_edit_script - %s' % case.name
         yield test
+
 
 def test_html_patch():
     for case in parse_cases(all_test_cases):
@@ -848,14 +1344,20 @@ def test_html_patch():
         test.description = 'test_html_patch - %s' % case.name
         yield test
 
+
 def test_cases_sanity():
     # check that removing the ins and del markup gives the original
     sane_cases = (test_cases + reverse_test_cases + one_way_test_cases)
     for case in parse_cases(sane_cases):
         def test():
-            assert_strip_changes(case.old_html, case.new_html, case.target_changes)
+            assert_strip_changes(
+                case.old_html,
+                case.new_html,
+                case.target_changes,
+            )
         test.description = 'test_cases_sanity - %s' % case.name
         yield test
+
 
 def test_html_diff():
     for case in parse_cases(all_test_cases):
