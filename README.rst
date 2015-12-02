@@ -2,7 +2,7 @@
 HTML Tree Diff
 ==============
 
-.. image:: https://travis-ci.org/PolicyStat/htmltreediff.svg
+.. image:: https://travis-ci.org/PolicyStat/htmltreediff.svg?branch=master
     :target: https://travis-ci.org/PolicyStat/htmltreediff
 
 Structure aware diff of XML and HTML documents.
