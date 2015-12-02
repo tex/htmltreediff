@@ -120,9 +120,9 @@ test_cases = [  # test case = (old html, new html, inline changes, edit script)
     ),
     (
         'simple insert with tail text',
-        '<div>tail</div>',
-        '<div><h1>one</h1>tail</div>',
-        '<div><ins><h1>one</h1></ins>tail</div>',
+        '<p>tail</p>',
+        '<p><h1>one</h1>tail</p>',
+        '<p><ins><h1>one</h1></ins>tail</p>',
         [
             ('insert', [0, 0], {
                 'node_type': Node.ELEMENT_NODE,
