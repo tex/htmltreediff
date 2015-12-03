@@ -33,8 +33,8 @@ def diff(old_html, new_html, cutoff=0.0, plaintext=False, pretty=False):
             'show concisely.</h2>'
         )
 
-    _convert_divs_to_paragraphs(old_dom)
-    _convert_divs_to_paragraphs(new_dom)
+    _convert_paragraphs_to_divs(old_dom)
+    _convert_paragraphs_to_divs(new_dom)
 
     dom = dom_diff(old_dom, new_dom)
 
@@ -51,9 +51,9 @@ def diff(old_html, new_html, cutoff=0.0, plaintext=False, pretty=False):
     return minidom_tostring(dom, pretty=pretty)
 
 
-def _convert_divs_to_paragraphs(dom):
-    for node in list(dom.getElementsByTagName('div')):
-        node.tagName = 'p'
+def _convert_paragraphs_to_divs(dom):
+    for node in list(dom.getElementsByTagName('p')):
+        node.tagName = 'div'
 
 
 def _internalize_changes_markup(dom, child_tag_names):
