@@ -152,7 +152,7 @@ def test_other_node_type_inserted():
     )
     assert_equal(
         changes,
-        '<p>foo<ins> bar</ins></p>',
+        '<div>foo<ins> bar</ins></div>',
     )
 
 
