@@ -35,7 +35,7 @@ def parse_text(text):
     return dom
 
 
-def parse_minidom(xml, clean=True, strict_xml=False):
+def parse_minidom(xml, clean=False, strict_xml=False):
     # Preprocessing
     xml = remove_comments(xml)
     if clean and not strict_xml:
