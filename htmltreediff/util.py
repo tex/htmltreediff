@@ -10,7 +10,48 @@ from xml.dom.pulldom import SAX2DOM
 import lxml.html
 import lxml.etree
 import lxml.sax
+from HTMLParser import HTMLParser
 
+def _write_data(writer, data):
+    "Writes datachars to writer."
+    if data:
+        # Change against master: qutebrowser needs all non-ascii
+        # characters to be escaped.
+        data = data.encode('ascii', 'xmlcharrefreplace')
+        writer.write(data)
+
+def writexml(self, writer, indent="", addindent="", newl=""):
+    # indent = current indentation
+    # addindent = indentation to add to higher levels
+    # newl = newline string
+    writer.write(indent+"<" + self.tagName)
+
+    attrs = self._get_attributes()
+    a_names = sorted(attrs.keys())
+
+    for a_name in a_names:
+        writer.write(" %s=\"" % a_name)
+        minidom._write_data(writer, attrs[a_name].value)
+        writer.write("\"")
+    if self.childNodes:
+        writer.write(">")
+        if (len(self.childNodes) == 1 and
+            self.childNodes[0].nodeType == Node.TEXT_NODE):
+            self.childNodes[0].writexml(writer, '', '', '')
+        else:
+            writer.write(newl)
+            for node in self.childNodes:
+                node.writexml(writer, indent+addindent, addindent, newl)
+            writer.write(indent)
+        writer.write("</%s>%s" % (self.tagName, newl))
+    else:
+        # Change against master: qutebrowser doesn't handle short tags
+        # well. Font type escapes out, this is problem with <pre><code/></pre>
+        writer.write("></%s>%s"%(self.tagName, newl))
+
+# Monkey patch minidom...
+minidom._write_data = _write_data
+minidom.Element.writexml = writexml
 
 def parse_lxml_dom(xml, strict_xml=True):
     if strict_xml:
